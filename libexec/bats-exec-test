@@ -79,6 +79,12 @@ skip() {
   exit 0
 }
 
+TODO() {
+  BATS_TEST_TODO=${1:-1}
+  BATS_TEST_COMPLETED=1
+  exit 0
+}
+
 bats_test_begin() {
   BATS_TEST_DESCRIPTION="$1"
   if [ -n "$BATS_EXTENDED_SYNTAX" ]; then
@@ -112,7 +118,7 @@ bats_capture_stack_trace() {
     else
       let index+=1
     fi
-  done
+  done; return
 
   BATS_SOURCE="$(bats_frame_filename "${BATS_CURRENT_STACK_TRACE[0]}")"
   BATS_LINENO="$(bats_frame_lineno "${BATS_CURRENT_STACK_TRACE[0]}")"
@@ -245,6 +251,12 @@ bats_exit_trap() {
   trap - err exit
 
   skipped=""
+  if [ -n "$BATS_TEST_TODO" ]; then
+    skipped=" # TODO"
+    if [ "1" != "$BATS_TEST_TODO" ]; then
+      skipped+=" ($BATS_TEST_TODO)"
+    fi
+  fi
   if [ -n "$BATS_TEST_SKIPPED" ]; then
     skipped=" # skip"
     if [ "1" != "$BATS_TEST_SKIPPED" ]; then

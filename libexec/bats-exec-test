@@ -85,6 +85,24 @@ TODO() {
   exit 0
 }
 
+diag() {
+  BATS_TEST_DIAGNOSTICS=1
+  echo "$1" >>"$BATS_OUT"
+}
+
+fail() {
+  if test -n "$1" 
+  then
+    echo "Failed: $1" >>"$BATS_OUT"
+  fi
+  exit 0
+}
+
+bail() {
+  echo "TODO: bail out!"
+  # No more tests; would want option to choose skip rest of file or suite
+}
+
 bats_test_begin() {
   BATS_TEST_DESCRIPTION="$1"
   if [ -n "$BATS_EXTENDED_SYNTAX" ]; then
@@ -266,12 +284,19 @@ bats_exit_trap() {
 
   if [ -z "$BATS_TEST_COMPLETED" ] || [ -z "$BATS_TEARDOWN_COMPLETED" ]; then
     echo "not ok $BATS_TEST_NUMBER $BATS_TEST_DESCRIPTION" >&3
-    bats_print_stack_trace "${BATS_ERROR_STACK_TRACE[@]}" >&3
-    bats_print_failed_command "${BATS_ERROR_STACK_TRACE[${#BATS_ERROR_STACK_TRACE[@]}-1]}" "$BATS_ERROR_STATUS" >&3
+    if test ${#BATS_ERROR_STACK_TRACE[@]} -gt 0
+    then
+      bats_print_stack_trace "${BATS_ERROR_STACK_TRACE[@]}" >&3
+      bats_print_failed_command "${BATS_ERROR_STACK_TRACE[${#BATS_ERROR_STACK_TRACE[@]}-1]}" "$BATS_ERROR_STATUS" >&3
+    fi
     sed -e "s/^/# /" < "$BATS_OUT" >&3
     status=1
   else
     echo "ok ${BATS_TEST_NUMBER}${skipped} ${BATS_TEST_DESCRIPTION}" >&3
+    if test -n "$BATS_TEST_DIAGNOSTICS" -a -s "$BATS_OUT"
+    then
+      sed -e "s/^/# /" < "$BATS_OUT" >&3
+    fi
     status=0
   fi
 

@@ -11,7 +11,7 @@ Whishlist: nested tests; bail out directive; execution of selected tests only.
 
 -----
 
-- original sstephenson ReaMe__
+- original sstephenson ReadMe__
 
 .. __: README.md
 

@@ -9,10 +9,31 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
-BATS_RUN_IDX=""
+shopt -s extglob
+
+bats_evaluate_idx_arg()
+{
+  local i= s= e=
+  echo "$@" | tr ',' ' ' | tr ' ' '\n' | while read spec
+  do
+    case "$spec" in
+      +([0-9]) )
+          echo $spec
+        ;;
+      +([0-9])-+([0-9]) )
+          s=$(echo $spec | cut -d- -f1)
+          e=$(echo $spec | cut -d- -f2)
+          seq $s $e | xargs echo
+        ;;
+    esac
+  done
+}
+     
+BATS_RUN_IDX=()
 if [ "$1" = "-i" ]; then
   shift
-  BATS_RUN_IDX=$1
+  BATS_SELECTION="1"
+  BATS_RUN_IDX=($(bats_evaluate_idx_arg $1))
   shift
 fi
 
@@ -316,6 +337,24 @@ bats_perform_tests() {
   test_number=1
   status=0
   for test_name in "$@"; do
+
+    # Remove everything but selected tests
+    if [ -n "${BATS_SELECTION}" ]; then
+      if [ ${#BATS_RUN_IDX[@]} -gt 0 ]; then
+        if [ $test_number -eq ${BATS_RUN_IDX[0]} ]; then
+          BATS_RUN_IDX=(${BATS_RUN_IDX[@]:1})
+        else
+          echo "# skip: #$test_number"
+          let test_number+=1
+          continue
+        fi
+      else
+        echo "# skip: #$test_number"
+        let test_number+=1
+        continue
+      fi
+    fi
+
     "$0" $BATS_EXTENDED_SYNTAX "$BATS_TEST_FILENAME" "$test_name" "$test_number" || status=1
     let test_number+=1
   done
@@ -373,17 +412,6 @@ bats_evaluate_preprocessed_source() {
   source "$BATS_TEST_SOURCE"
 }
 
-shopt -s extglob
-
-bats_evaluate_idx_arg()
-{
-  echo "$@" | tr ',' ' ' | tr ' ' '\n' | while read idx
-  do
-    case "$idx" in +([0-9]) ) echo $idx ;;
-      +([0-9])-+([0-9]) ) echo "TODO range $idx" ;;
-    esac
-  done
-}
 
 exec 3<&1
 
@@ -394,16 +422,7 @@ if [ "$#" -eq 0 ]; then
   if [ -n "$BATS_COUNT_ONLY" ]; then
     echo "${#BATS_TEST_NAMES[@]}"
   else
-    if [ -n "$BATS_RUN_IDX" ]; then
-      for idx in $(bats_evaluate_idx_arg "$BATS_RUN_IDX")
-      do
-        echo "# Test at $idx, ${BATS_TEST_NAMES[$idx]}"
-        bats_perform_test "${BATS_TEST_NAMES[$idx]}" || echo ret=$?
-      done
-    else
-      #echo bats_perform_tests "${BATS_TEST_NAMES[@]}"
-      bats_perform_tests "${BATS_TEST_NAMES[@]}"
-    fi
+    bats_perform_tests "${BATS_TEST_NAMES[@]}"
   fi
 else
   bats_evaluate_preprocessed_source

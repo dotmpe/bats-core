@@ -2,7 +2,7 @@
 set -e
 
 version() {
-  echo "Bats 0.4.0"
+  echo "Bats 0.4.0-f-run-index"
 }
 
 usage() {
@@ -17,6 +17,8 @@ help() {
   echo "  containing Bats test files."
   echo
   echo "  -c, --count    Count the number of test cases without running any tests"
+  echo "  -i, --index    Run tests at given position(s). Valid values include "
+  echo "                 single numbers, ranges, or list."
   echo "  -h, --help     Display this help message"
   echo "  -p, --pretty   Show results in pretty format (default for terminals)"
   echo "  -t, --tap      Show results in TAP format"
@@ -76,7 +78,7 @@ for arg in "$@"; do
   fi
 done
 
-unset count_flag pretty
+unset count_flag index_flag pretty
 [ -t 0 ] && [ -t 1 ] && pretty="1"
 [ -n "$CI" ] && pretty=""
 
@@ -92,6 +94,11 @@ for option in "${options[@]}"; do
     ;;
   "c" | "count" )
     count_flag="-c"
+    ;;
+  "i" | "index" )
+    index_flag="-i ${arguments[@]:0:1}"
+    arguments=("${arguments[@]:1}")
+    shift
     ;;
   "t" | "tap" )
     pretty=""
@@ -139,4 +146,4 @@ else
 fi
 
 set -o pipefail execfail
-exec "$command" $count_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
+exec "$command" $count_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"

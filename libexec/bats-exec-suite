@@ -7,6 +7,13 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
+run_only_flag=""
+if [ "$1" = "-i" ]; then
+  shift
+  run_only_flag=$1
+  shift
+fi
+
 extended_syntax_flag=""
 if [ "$1" = "-x" ]; then
   extended_syntax_flag="-x"
@@ -48,7 +55,7 @@ for filename in "$@"; do
         ;;
       esac
     done
-  } < <( bats-exec-test $extended_syntax_flag "$filename" )
+  } < <( bats-exec-test $index_flag $extended_syntax_flag "$filename" )
   offset=$(($offset + $index))
 done
 

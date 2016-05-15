@@ -9,6 +9,13 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
+BATS_RUN_IDX=""
+if [ "$1" = "-i" ]; then
+  shift
+  BATS_RUN_IDX=$1
+  shift
+fi
+
 BATS_EXTENDED_SYNTAX=""
 if [ "$1" = "-x" ]; then
   BATS_EXTENDED_SYNTAX="$1"
@@ -366,6 +373,18 @@ bats_evaluate_preprocessed_source() {
   source "$BATS_TEST_SOURCE"
 }
 
+shopt -s extglob
+
+bats_evaluate_idx_arg()
+{
+  echo "$@" | tr ',' ' ' | tr ' ' '\n' | while read idx
+  do
+    case "$idx" in +([0-9]) ) echo $idx ;;
+      +([0-9])-+([0-9]) ) echo "TODO range $idx" ;;
+    esac
+  done
+}
+
 exec 3<&1
 
 if [ "$#" -eq 0 ]; then
@@ -375,9 +394,18 @@ if [ "$#" -eq 0 ]; then
   if [ -n "$BATS_COUNT_ONLY" ]; then
     echo "${#BATS_TEST_NAMES[@]}"
   else
-    bats_perform_tests "${BATS_TEST_NAMES[@]}"
+    if [ -n "$BATS_RUN_IDX" ]; then
+      for idx in $(bats_evaluate_idx_arg "$BATS_RUN_IDX")
+      do
+        echo "# Test at $idx, ${BATS_TEST_NAMES[$idx]}"
+        bats_perform_test "${BATS_TEST_NAMES[$idx]}" || echo ret=$?
+      done
+    else
+      #echo bats_perform_tests "${BATS_TEST_NAMES[@]}"
+      bats_perform_tests "${BATS_TEST_NAMES[@]}"
+    fi
   fi
 else
   bats_evaluate_preprocessed_source
-  bats_perform_test "$@"
+  bats_perform_test "${@}"
 fi

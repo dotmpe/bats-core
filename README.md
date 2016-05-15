@@ -1,14 +1,5 @@
 # Bats: Bash Automated Testing System
 
-Forked to hack on 1. diagnostics, 2. TODO directive.
-
-- TODO: option to toggle diagnostics
-- TODO: new-tests.bats
-
-Whishlist: nested tests; bail out directive; execution of selected tests only.
-
------
-
 Bats is a [TAP](http://testanything.org)-compliant testing framework
 for Bash. It provides a simple way to verify that the UNIX programs
 you write behave as expected.

@@ -28,5 +28,6 @@ f_run_index
 
     TODO: filter BATS_TEST_NAMES[] array using indices. Then look at creating
     unified output report.
+    Done. Now have to refactor to move skipping to bats_test_begin.
 
 

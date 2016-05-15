@@ -344,12 +344,14 @@ bats_perform_tests() {
         if [ $test_number -eq ${BATS_RUN_IDX[0]} ]; then
           BATS_RUN_IDX=(${BATS_RUN_IDX[@]:1})
         else
-          echo "# skip: #$test_number"
+          echo "begin $test_number $BATS_TEST_DESCRIPTION"
+          echo "ok $test_number # skip ($test_number) $BATS_TEST_DESCRIPTION"
           let test_number+=1
           continue
         fi
       else
-        echo "# skip: #$test_number"
+        echo "begin $test_number $BATS_TEST_DESCRIPTION"
+        echo "ok $test_number # skip ($test_number) $BATS_TEST_DESCRIPTION"
         let test_number+=1
         continue
       fi

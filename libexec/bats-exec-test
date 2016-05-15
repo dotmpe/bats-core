@@ -332,6 +332,15 @@ bats_exit_trap() {
   exit "$status"
 }
 
+bats_skip_test()
+{
+  if [ -n "$BATS_EXTENDED_SYNTAX" ]; then
+    echo "begin $test_number"
+  fi
+  echo "ok $test_number # skip ($test_number)"
+  let test_number+=1
+}
+
 bats_perform_tests() {
   echo "1..$#"
   test_number=1
@@ -340,19 +349,16 @@ bats_perform_tests() {
 
     # Remove everything but selected tests
     if [ -n "${BATS_SELECTION}" ]; then
+
       if [ ${#BATS_RUN_IDX[@]} -gt 0 ]; then
         if [ $test_number -eq ${BATS_RUN_IDX[0]} ]; then
           BATS_RUN_IDX=(${BATS_RUN_IDX[@]:1})
         else
-          echo "begin $test_number $BATS_TEST_DESCRIPTION"
-          echo "ok $test_number # skip ($test_number) $BATS_TEST_DESCRIPTION"
-          let test_number+=1
+          bats_skip_test
           continue
         fi
       else
-        echo "begin $test_number $BATS_TEST_DESCRIPTION"
-        echo "ok $test_number # skip ($test_number) $BATS_TEST_DESCRIPTION"
-        let test_number+=1
+        bats_skip_test
         continue
       fi
     fi

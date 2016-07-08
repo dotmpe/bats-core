@@ -6,7 +6,12 @@ Forked to hack on 1. diagnostics, 2. TODO directive.
 - TODO: option to toggle diagnostics
 - TODO: new-tests.bats
 
-Whishlist: nested tests; bail out directive; execution of selected tests only.
+Whishlist:
+- nested tests;
+- bail out directive;
+
+Work in progress:
+- execution of selected tests only [run-at-index]
 
 
 -----

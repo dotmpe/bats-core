@@ -9,6 +9,11 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
+if [ "$1" = "-l" ]; then
+  BATS_LIST_ONLY=1
+  shift
+fi
+
 BATS_EXTENDED_SYNTAX=""
 if [ "$1" = "-x" ]; then
   BATS_EXTENDED_SYNTAX="$1"
@@ -375,7 +380,14 @@ if [ "$#" -eq 0 ]; then
   if [ -n "$BATS_COUNT_ONLY" ]; then
     echo "${#BATS_TEST_NAMES[@]}"
   else
-    bats_perform_tests "${BATS_TEST_NAMES[@]}"
+    if [ -n "$BATS_LIST_ONLY" ]; then
+      for x in "${BATS_TEST_NAMES[@]}"
+      do
+        echo $x
+      done
+    else
+      bats_perform_tests "${BATS_TEST_NAMES[@]}"
+    fi
   fi
 else
   bats_evaluate_preprocessed_source

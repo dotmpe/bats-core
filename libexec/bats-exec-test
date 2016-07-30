@@ -30,6 +30,10 @@ bats_evaluate_idx_arg()
           e=$(echo $spec | cut -d- -f2)
           seq $s $e | xargs echo
         ;;
+      * )
+          echo "Invalid index/range: '$spec'" >&2
+          exit 1
+        ;;
     esac
   done
 }

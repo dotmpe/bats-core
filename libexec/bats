@@ -7,7 +7,7 @@ version() {
 
 usage() {
   version
-  echo "Usage: bats [-c] [-i index] [-p | -t] <test> [<test> ...]"
+  echo "Usage: bats [-c] [-i <range>] [-p | -t] <test> [<test> ...]"
 }
 
 help() {
@@ -18,7 +18,7 @@ help() {
   echo
   echo "  -c, --count    Count the number of test cases without running any tests"
   echo "  -i, --index    Run tests at given position(s). Valid values include "
-  echo "                 single numbers, ranges, or list."
+  echo "                 single numbers, ranges, or CSV of those."
   echo "  -h, --help     Display this help message"
   echo "  -p, --pretty   Show results in pretty format (default for terminals)"
   echo "  -t, --tap      Show results in TAP format"

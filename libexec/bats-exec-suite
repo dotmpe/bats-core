@@ -31,6 +31,7 @@ if [ -n "$count_only_flag" ]; then
   echo "$count"
   exit
 fi
+flags="$run_only_flag $list_only_flag $extended_syntax_flag"
 
 echo "1..$count"
 status=0
@@ -55,7 +56,7 @@ for filename in "$@"; do
         ;;
       esac
     done
-  } < <( bats-exec-test $run_only_flag $extended_syntax_flag "$filename" )
+  } < <( bats-exec-test $flags "$filename" )
   offset=$(($offset + $index))
 done
 

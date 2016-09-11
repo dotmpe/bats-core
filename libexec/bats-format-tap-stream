@@ -152,7 +152,8 @@ while IFS= read -r line; do
   case "$line" in
   "begin "* )
     let index+=1
-    name="${line#* $index }"
+    name="${line#* $index}"
+    name="${name# }"
     buffer begin
     flush
     ;;

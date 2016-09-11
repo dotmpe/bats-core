@@ -7,7 +7,7 @@ version() {
 
 usage() {
   version
-  echo "Usage: bats [-c] [-i <range>] [-p | -t] <test> [<test> ...]"
+  echo "Usage: bats [-c | -l] [-i <range>] [-p | -t] <test> [<test> ...]"
 }
 
 help() {
@@ -17,6 +17,9 @@ help() {
   echo "  containing Bats test files."
   echo
   echo "  -c, --count    Count the number of test cases without running any tests"
+  echo "  -l, --list [names|descriptions]"
+  echo "                 List only. Prints number followed by description by"
+  echo "                 default. "
   echo "  -i, --index    Run tests at given position(s). Valid values include "
   echo "                 single numbers, ranges, or CSV of those."
   echo "  -h, --help     Display this help message"
@@ -92,6 +95,15 @@ for option in "${options[@]}"; do
     version
     exit 0
     ;;
+  "l" | "list" )
+    list_flag="-l"
+    case "${arguments[@]:0:1}" in names | descriptions )
+        list_flag="-l ${arguments[@]:0:1}"
+        arguments=("${arguments[@]:1}")
+        shift
+      ;;
+    esac
+    ;;
   "c" | "count" )
     count_flag="-c"
     ;;
@@ -146,4 +158,4 @@ else
 fi
 
 set -o pipefail execfail
-exec "$command" $count_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
+exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"

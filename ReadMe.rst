@@ -1,6 +1,7 @@
 Bats: Bash Automated Testing System (fork)
 ============================================
-:Version: 0.4.1-mpe
+:Version: 0.4.2-mpe
+
 
 Forked to hack on:
 
@@ -24,9 +25,14 @@ Work in progress:
 
    Please note `Call for Maintainers #150 <https://github.com/sstephenson/bats/issues/150>`__.
 
+   Effectively the official BATS will be stalled at 0.4.0 and locked until
+   someone solves 1.0 by going through the backlog.
+
 
 Before presenting a upstream merge request based on my additions, I'd like to
-see extending BATS resolved somehow. E.g. <https://github.com/ztombol/bats-docs>
+see extending BATS resolved somehow.
+E.g. <https://github.com/ztombol/bats-docs>.
+
 
 -----
 

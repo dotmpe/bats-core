@@ -6,10 +6,6 @@ Bats: Bash Automated Testing System (fork)
 :CI status (original sstephenson/bats):
   .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=original
 
-Forked to hack on:
-
-1. easier diagnostics of BATS tests,
-2. TODO/other TAP directive in addition to BATS' fail.
 
 - TODO: option to toggle diagnostics
 - TODO: new-tests.bats
@@ -18,8 +14,13 @@ Whishlist:
   - nested tests; (ie. extended TAP support)
   - bail out directive;
 
-Work in progress:
-- execution of selected tests only [f-run-index]
+Done:
+  - Execution of selected tests only, based on number [f-run-index]
+  - Added TODO test state and command.
+  - Added `fail` and `diag` test helpers.
+
+Want to add more test helpers, but need to see ideas on separately packaged
+extensions to BATS first.
 
 
 .. important::

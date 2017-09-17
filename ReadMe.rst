@@ -3,6 +3,8 @@ Bats: Bash Automated Testing System (fork)
 :Version: 0.4.2-mpe
 :CI status (master):
   .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=master
+:CI status (original sstephenson/bats):
+  .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=original
 
 Forked to hack on:
 
@@ -22,7 +24,7 @@ Work in progress:
 
 .. important::
 
-   BATS official development is has stalled and the backlog keeps growing.
+   BATS official development has stalled and the backlog keeps growing.
 
    Please note `Call for Maintainers #150 <https://github.com/sstephenson/bats/issues/150>`__.
 

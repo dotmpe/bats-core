@@ -2,4 +2,17 @@
 - main: bats-mpe
   id: bats-mpe
   version: 0.4.1-mpe # bats-mpe
+  scripts:
+    install:
+      gem install ronn
+    check:
+      - git-versioning check
+      - test man/bats.1 -nt man/bats.1.ronn
+      - test man/bats.7 -nt man/bats.7.ronn
+    build:
+      - cd man && make
+    global-install:
+      - ./install.sh /usr/local
+    test:
+      - bats test/
 

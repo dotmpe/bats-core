@@ -1,7 +1,8 @@
 Bats: Bash Automated Testing System (fork)
 ============================================
 :Version: 0.4.2-mpe
-
+:CI status (master):
+  .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=master
 
 Forked to hack on:
 

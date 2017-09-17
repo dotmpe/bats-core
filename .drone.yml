@@ -1,0 +1,6 @@
+pipeline:
+  shell:
+    image: bvberkum/alpine-bats-dev:3.6
+    commands:
+     - cd $DRONE_WORKSPACE
+     - bats test/*.bats

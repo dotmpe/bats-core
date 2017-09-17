@@ -1,6 +1,10 @@
 # Bats: Bash Automated Testing System (fork)
 
-See new [ReadMe](ReadMe.rst).
+See new [ReadMe](ReadMe.rst), and also 
+[CI](https://travis-ci.org/bvberkum/bats) and
+[Docker builds](/bvberkum/x-docker).
+
+---
 
 Bats is a [TAP](http://testanything.org)-compliant testing framework
 for Bash. It provides a simple way to verify that the UNIX programs

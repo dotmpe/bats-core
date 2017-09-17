@@ -109,6 +109,42 @@ Or you can skip conditionally:
       [ "$status" -eq 0 ]
     }
 
+THE TODO COMMAND
+----------------
+
+Tests can be aborted without marking it as failed or skipped by the 
+TODO command. Like the skip command, it is a function that accepts a 
+single reason string argument.
+
+
+THE DIAG COMMAND
+----------------
+
+The diag command turns on test-diagnostics, and adds the given string
+to the internal BATS test output. Which is later converted by bats to
+'#'-prefixed diagnostic lines in the TAP output.
+
+Normally, diagnostics are turned of as long as the test passes. This
+allows you to stil be verbose about the tested functionality.
+
+
+THE FAIL COMMAND
+----------------
+
+The fail command allows to fail the test and add a reason to the
+internal BATS test output in one call. For example:
+
+  @test "Shell command test-case" {
+    run my-command
+    { test $status -eq 0 &&
+      test ${#lines[*]} -eq 1 &&
+      case " ${lines[1]} " in
+        *" expected output "* ) return ;;
+        * ) return 1 ;; esac
+    } ||
+      fail "Unexpected ($status): (${#lines[*]}) lines: ${lines[*]}"
+  }
+
 
 SETUP AND TEARDOWN FUNCTIONS
 ----------------------------

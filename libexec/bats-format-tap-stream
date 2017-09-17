@@ -52,11 +52,11 @@ skip() {
   advance
 }
 
-todo() {
+TODO() {
   local reason="$1"
   [ -z "$reason" ] || reason=": $reason"
   go_to_column 0
-  printf " - %s (todo%s)" "$name" "$reason"
+  printf " - %s (TODO%s)" "$name" "$reason"
   advance
 }
 
@@ -152,7 +152,8 @@ while IFS= read -r line; do
   case "$line" in
   "begin "* )
     let index+=1
-    name="${line#* $index }"
+    name="${line#* $index}"
+    name="${name# }"
     buffer begin
     flush
     ;;
@@ -160,7 +161,7 @@ while IFS= read -r line; do
     todo_expr="ok $index # TODO (\(([^)]*)\))?"
     if [[ "$line" =~ $todo_expr ]]; then
       let todo+=1
-      buffer todo "${BASH_REMATCH[2]}"
+      buffer TODO "${BASH_REMATCH[2]}"
     else
     skip_expr="ok $index # skip (\(([^)]*)\))?"
     if [[ "$line" =~ $skip_expr ]]; then

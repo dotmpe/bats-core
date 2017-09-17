@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "BATS" "7" "November 2013" "" ""
+.TH "BATS" "7" "September 2017" "" ""
 .
 .SH "NAME"
 \fBbats\fR \- Bats test file format
@@ -141,6 +141,21 @@ Or you can skip conditionally:
 .fi
 .
 .IP "" 0
+.
+.SH "THE TODO COMMAND"
+Tests can be aborted without marking it as failed or skipped by the TODO command\. Like the skip command, it is a function that accepts a single reason string argument\.
+.
+.SH "THE DIAG COMMAND"
+The diag command turns on test\-diagnostics, and adds the given string to the internal BATS test output\. Which is later converted by bats to \'#\'\-prefixed diagnostic lines in the TAP output\.
+.
+.P
+Normally, diagnostics are turned of as long as the test passes\. This allows you to stil be verbose about the tested functionality\.
+.
+.SH "THE FAIL COMMAND"
+The fail command allows to fail the test and add a reason to the internal BATS test output in one call\. For example:
+.
+.P
+@test "Shell command test\-case" { run my\-command { test $status \-eq 0 && test ${#lines[\fI]} \-eq 1 && case " ${lines[1]} " in\fR" expected output "\fI) return ;; * ) return 1 ;; esac } || fail "Unexpected ($status): (${#lines[\fR]}) lines: ${lines[*]}" }
 .
 .SH "SETUP AND TEARDOWN FUNCTIONS"
 You can define special \fBsetup\fR and \fBteardown\fR functions which run before and after each test case, respectively\. Use these to load fixtures, set up your environment, and clean up when you\'re done\.

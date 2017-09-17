@@ -5,7 +5,7 @@ bats(1) -- Bash Automated Testing System
 SYNOPSIS
 --------
 
-bats [-c] [-p | -t] <test> [<test> ...]
+bats [-c | -l] [-i <range>] [-p | -t] <test> [<test> ...]
 
 <test> is the path to a Bats test file, or the path to a directory
 containing Bats test files.
@@ -48,6 +48,11 @@ OPTIONS
 
   * `-c`, `--count`:
     Count the number of test cases without running any tests
+  * `-l`, `--list [names|descriptions]`:
+    List only. Prints number followed by description by default.
+  * `-i`, `--index`:
+    Run tests at given position(s). Valid values include single numbers, ranges,
+    or CSV of those.
   * `-h`, `--help`:
     Display help message
   * `-p`, `--pretty`:
@@ -82,6 +87,22 @@ with the `--tap` option.
     ok 1 addition using bc
     ok 2 addition using dc
 
+Tests can be selected by index. Tests not in the selection are skipped.
+
+    $ bats -i 2 addition.bats
+     - addition using bc (skipped: 1)
+     ✓ addition using dc
+
+To list test, use the `-l` option.
+
+    $ bats -l addition.bats
+    1 addition using bc
+    2 addition using dc
+
+    $ bats -l names addition.bats
+    addition_using_bc
+    addition_using_dc
+
 
 EXIT STATUS
 -----------
@@ -102,8 +123,6 @@ COPYRIGHT
 ---------
 
 (c) 2014 Sam Stephenson
+(c) 2017 Berend van Berkum
 
 Bats is released under the terms of an MIT-style license.
-
-
-

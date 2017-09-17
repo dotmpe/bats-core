@@ -1,4 +1,5 @@
 
-- main: bats.mpe
-  id: bats.mpe
+- main: bats-mpe
+  id: bats-mpe
+  version: 0.4.1-mpe # bats-mpe
 

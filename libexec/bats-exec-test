@@ -12,6 +12,43 @@ fi
 if [ "$1" = "-l" ]; then
   BATS_LIST_ONLY=1
   shift
+  case "$1" in names | descriptions )
+      BATS_LIST_ONLY=$1
+      shift
+    ;;
+  esac
+fi
+
+shopt -s extglob
+
+bats_evaluate_idx_arg()
+{
+  local i= s= e=
+  echo "$@" | tr ',' ' ' | tr ' ' '\n' | while read spec
+  do
+    case "$spec" in
+      +([0-9]) )
+          echo $spec
+        ;;
+      +([0-9])-+([0-9]) )
+          s=$(echo $spec | cut -d- -f1)
+          e=$(echo $spec | cut -d- -f2)
+          seq $s $e | xargs echo
+        ;;
+      * )
+          echo "Invalid index/range: '$spec'" >&2
+          exit 1
+        ;;
+    esac
+  done
+}
+     
+BATS_RUN_IDX=()
+if [ "$1" = "-i" ]; then
+  shift
+  BATS_SELECTION="1"
+  BATS_RUN_IDX=($(bats_evaluate_idx_arg $1))
+  shift
 fi
 
 BATS_EXTENDED_SYNTAX=""
@@ -309,11 +346,37 @@ bats_exit_trap() {
   exit "$status"
 }
 
+bats_skip_test()
+{
+  if [ -n "$BATS_EXTENDED_SYNTAX" ]; then
+    echo "begin $test_number"
+  fi
+  echo "ok $test_number # skip ($test_number)"
+  let test_number+=1
+}
+
 bats_perform_tests() {
   echo "1..$#"
   test_number=1
   status=0
   for test_name in "$@"; do
+
+    # Remove everything but selected tests
+    if [ -n "${BATS_SELECTION}" ]; then
+
+      if [ ${#BATS_RUN_IDX[@]} -gt 0 ]; then
+        if [ $test_number -eq ${BATS_RUN_IDX[0]} ]; then
+          BATS_RUN_IDX=(${BATS_RUN_IDX[@]:1})
+        else
+          bats_skip_test
+          continue
+        fi
+      else
+        bats_skip_test
+        continue
+      fi
+    fi
+
     "$0" $BATS_EXTENDED_SYNTAX "$BATS_TEST_FILENAME" "$test_name" "$test_number" || status=1
     let test_number+=1
   done
@@ -337,6 +400,32 @@ bats_perform_test() {
     "$BATS_TEST_NAME" >>"$BATS_OUT" 2>&1
     BATS_TEST_COMPLETED=1
 
+  else
+    echo "bats: unknown test name \`$BATS_TEST_NAME'" >&2
+    exit 1
+  fi
+}
+
+bats_print_test() {
+  BATS_TEST_NAME="$1"
+  if [ "$(type -t "$BATS_TEST_NAME" || true)" = "function" ]; then
+    BATS_TEST_NUMBER="$2"
+    if [ -z "$BATS_TEST_NUMBER" ]; then
+      BATS_TEST_NUMBER="1"
+    fi
+
+    (
+      bats_test_begin() { echo "$1"; exit ; }
+      if test "$BATS_LIST_ONLY" = "names"
+      then
+        echo "$BATS_TEST_NAME"
+      else if test "$BATS_LIST_ONLY" = "descriptions"
+      then
+        echo "$($BATS_TEST_NAME)"
+      else
+        echo "$BATS_TEST_NUMBER $($BATS_TEST_NAME)"
+      fi; fi
+    )
   else
     echo "bats: unknown test name \`$BATS_TEST_NAME'" >&2
     exit 1
@@ -371,6 +460,7 @@ bats_evaluate_preprocessed_source() {
   source "$BATS_TEST_SOURCE"
 }
 
+
 exec 3<&1
 
 if [ "$#" -eq 0 ]; then
@@ -383,7 +473,8 @@ if [ "$#" -eq 0 ]; then
     if [ -n "$BATS_LIST_ONLY" ]; then
       for x in "${BATS_TEST_NAMES[@]}"
       do
-        echo $x
+        bats_print_test "$x" "$BATS_TEST_NUMBER"
+        BATS_TEST_NUMBER=$(( $BATS_TEST_NUMBER + 1 ))
       done
     else
       bats_perform_tests "${BATS_TEST_NAMES[@]}"
@@ -391,5 +482,5 @@ if [ "$#" -eq 0 ]; then
   fi
 else
   bats_evaluate_preprocessed_source
-  bats_perform_test "$@"
+  bats_perform_test "${@}"
 fi

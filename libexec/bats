@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
+version=0.4.1-mpe # bats-mpe
+
 version() {
-  echo "Bats 0.4.0-dev-mpe"
+  echo "Bats $version"
 }
 
 usage() {
   version
-  echo "Usage: bats [-c] [-p | -t] <test> [<test> ...]"
+  echo "Usage: bats [-c | -l] [-i <range>] [-p | -t] <test> [<test> ...]"
 }
 
 help() {
@@ -17,6 +19,11 @@ help() {
   echo "  containing Bats test files."
   echo
   echo "  -c, --count    Count the number of test cases without running any tests"
+  echo "  -l, --list [names|descriptions]"
+  echo "                 List only. Prints number followed by description by"
+  echo "                 default. "
+  echo "  -i, --index    Run tests at given position(s). Valid values include "
+  echo "                 single numbers, ranges, or CSV of those."
   echo "  -h, --help     Display this help message"
   echo "  -p, --pretty   Show results in pretty format (default for terminals)"
   echo "  -t, --tap      Show results in TAP format"
@@ -76,7 +83,7 @@ for arg in "$@"; do
   fi
 done
 
-unset count_flag pretty
+unset count_flag index_flag pretty
 [ -t 0 ] && [ -t 1 ] && pretty="1"
 [ -n "$CI" ] && pretty=""
 
@@ -90,8 +97,22 @@ for option in "${options[@]}"; do
     version
     exit 0
     ;;
+  "l" | "list" )
+    list_flag="-l"
+    case "${arguments[@]:0:1}" in names | descriptions )
+        list_flag="-l ${arguments[@]:0:1}"
+        arguments=("${arguments[@]:1}")
+        shift
+      ;;
+    esac
+    ;;
   "c" | "count" )
     count_flag="-c"
+    ;;
+  "i" | "index" )
+    index_flag="-i ${arguments[@]:0:1}"
+    arguments=("${arguments[@]:1}")
+    shift
     ;;
   "t" | "tap" )
     pretty=""
@@ -139,4 +160,4 @@ else
 fi
 
 set -o pipefail execfail
-exec "$command" $count_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
+exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"

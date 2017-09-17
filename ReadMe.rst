@@ -1,6 +1,5 @@
 Bats: Bash Automated Testing System (fork)
 ============================================
-
 Forked to hack on:
 
 1. easier diagnostics of BATS tests,
@@ -16,6 +15,16 @@ Whishlist:
 Work in progress:
 - execution of selected tests only [f-run-index]
 
+
+.. important::
+
+   BATS official development is has stalled and the backlog keeps growing.
+
+   Please note `Call for Maintainers #150 <https://github.com/sstephenson/bats/issues/150>`__.
+
+
+Before presenting a upstream merge request based on my additions, I'd like to
+see extending BATS resolved somehow. E.g. <https://github.com/ztombol/bats-docs>
 
 -----
 

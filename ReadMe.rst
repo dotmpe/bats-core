@@ -9,14 +9,14 @@ Bats: Bash Automated Testing System (fork)
 Forked to hack on:
 
 1. easier diagnostics of BATS tests,
-2. TODO/other TAP directive in addition to Bats' fail.
+2. TODO/other TAP directive in addition to BATS' fail.
 
 - TODO: option to toggle diagnostics
 - TODO: new-tests.bats
 
 Whishlist:
-- nested tests;
-- bail out directive;
+  - nested tests; (ie. extended TAP support)
+  - bail out directive;
 
 Work in progress:
 - execution of selected tests only [f-run-index]

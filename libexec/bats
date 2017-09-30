@@ -175,13 +175,12 @@ else
   command="bats-exec-suite"
 fi
 
+set -o pipefail execfail
 if [ "$pretty" = "1" ]; then
   extended_syntax_flag="-x"
   formatter="bats-format-tap-stream"
+  exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
 else
   extended_syntax_flag=""
-  formatter="cat"
+  exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}"
 fi
-
-set -o pipefail execfail
-exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"

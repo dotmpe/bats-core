@@ -190,7 +190,7 @@ fixtures bats
   [ "${lines[11]}" = '# failure stderr' ]
 }
 
-@test "'diag' forces output for passing test, or up unto 'skip'. 'diag' optionally takes an argument. '" {
+@test "'diag' forces output for passing test, or up unto 'skip'; it optionally takes an argument" {
   run bats "$FIXTURE_ROOT/diagnostics.bats"
   [ $status -eq 0 ]
   [ "${lines[2]}"  = '# success stdout 1' ]

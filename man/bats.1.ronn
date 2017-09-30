@@ -123,7 +123,7 @@ COPYRIGHT
 ---------
 
 - (c) 2017 Bianca Tamayo (bats-core organization)
-- (c) 2014 Sam Stephenson
 - (c) 2017 Berend van Berkum
+- (c) 2014 Sam Stephenson
 
 Bats is released under the terms of an MIT-style license.

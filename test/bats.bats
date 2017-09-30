@@ -190,6 +190,27 @@ fixtures bats
   [ "${lines[11]}" = '# failure stderr' ]
 }
 
+@test "'diag' forces output for passing test, or up unto 'skip'. 'diag' optionally takes an argument. '" {
+  run bats "$FIXTURE_ROOT/diagnostics.bats"
+  [ $status -eq 0 ]
+  [ "${lines[2]}"  = '# success stdout 1' ]
+  [ "${lines[3]}"  = '# success stdout 2' ]
+  [ "${lines[4]}"  = '# success stdout 3' ]
+  [ "${lines[6]}" = '# failure stdout 1' ]
+  [ "${lines[7]}" = '# failure stdout 2' ]
+}
+
+@test "-d/--debug forces output for every passing test, or up unto 'skip'" {
+  run bats -d "$FIXTURE_ROOT/output.bats"
+  [ $status -eq 1 ]
+  [ "${lines[2]}"  = '# success stdout 1' ]
+  [ "${lines[3]}"  = '# success stdout 2' ]
+  [ "${lines[9]}" = '# failure stdout 1' ]
+  [ "${lines[10]}" = '# failure stdout 2' ]
+  [ "${lines[14]}" = '# failure stderr' ]
+  [ "${#lines[*]}" = "15" ]
+}
+
 @test "-c prints the number of tests" {
   run bats -c "$FIXTURE_ROOT/empty.bats"
   [ $status -eq 0 ]

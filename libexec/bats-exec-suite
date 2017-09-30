@@ -7,6 +7,12 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
+diag_flag=
+if [ "$1" = "-d" ]; then
+  diag_flag=$1
+  shift
+fi
+
 run_only_flag=""
 if [ "$1" = "-i" ]; then
   shift
@@ -35,7 +41,7 @@ if [ -n "$count_only_flag" ]; then
   echo "$count"
   exit
 fi
-flags="$run_only_flag $list_only_flag $extended_syntax_flag"
+flags="$run_only_flag $diag_flag $list_only_flag $extended_syntax_flag"
 
 echo "1..$count"
 status=0

@@ -9,6 +9,14 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
+diag_flag=
+BATS_TEST_DIAGNOSTICS=
+if [ "$1" = "-d" ]; then
+  diag_flag=$1
+  BATS_TEST_DIAGNOSTICS=1
+  shift
+fi
+
 if [ "$1" = "-l" ]; then
   BATS_LIST_ONLY=1
   shift
@@ -129,7 +137,8 @@ TODO() {
 
 diag() {
   BATS_TEST_DIAGNOSTICS=1
-  echo "$1" >>"$BATS_OUT"
+  test -z "$1" ||
+    echo "$1" >>"$BATS_OUT"
 }
 
 fail() {
@@ -390,7 +399,7 @@ bats_perform_tests() {
       fi
     fi
 
-    "$0" $BATS_EXTENDED_SYNTAX "$BATS_TEST_FILENAME" "$test_name" "$test_number" || status=1
+    "$0" $diag_flag $BATS_EXTENDED_SYNTAX "$BATS_TEST_FILENAME" "$test_name" "$test_number" || status=1
     let test_number+=1
   done
   exit "$status"

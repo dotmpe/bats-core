@@ -7,19 +7,16 @@ Bats: Bash Automated Testing System (fork)
   .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=original
 
 
-- TODO: option to toggle diagnostics
-
-- Done: -l and -i testing.
-  TODO: add tests for diag and TODO and skip/fail combo's; new-tests.bats.
-
 Whishlist:
   - nested tests; (ie. extended TAP support)
   - bail out directive;
 
-Done:
+Done and tested:
   - Execution of selected tests only, based on number [f-run-index]
   - Added TODO test state and command.
   - Added `fail` and `diag` test helpers.
+  - Option to toggle diagnostics without hardcoded 'diag' call.
+
 
 Want to add more test helpers, but need to see ideas on separately packaged
 extensions to BATS first.

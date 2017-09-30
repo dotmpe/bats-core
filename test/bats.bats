@@ -352,3 +352,10 @@ fixtures bats
   [ "${#lines[*]}" = "5" ]
 }
 
+@test "duplicate tests cause a warning on stderr" {
+  run bats "$FIXTURE_ROOT/duplicate-tests.bats"
+  [ $status -eq 1 ]
+  case "${lines[0]}" in
+    "bats warning: duplicate test name(s) in /"*": test_gizmo_test " ) true ;; * ) false ;; esac
+  [ "${#lines[*]}" = "7" ]
+}

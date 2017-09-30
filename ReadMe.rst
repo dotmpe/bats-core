@@ -8,7 +8,9 @@ Bats: Bash Automated Testing System (fork)
 
 
 - TODO: option to toggle diagnostics
-- TODO: new-tests.bats
+
+- Done: -l and -i testing.
+  TODO: add tests for diag and TODO and skip/fail combo's; new-tests.bats.
 
 Whishlist:
   - nested tests; (ie. extended TAP support)

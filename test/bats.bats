@@ -275,3 +275,58 @@ fixtures bats
   [ $status -eq 0 ]
   [ "${lines[1]}" = "ok 1 loop_func" ]
 }
+
+@test "expand variables in test name" {
+  SUITE='test/suite' run bats "$FIXTURE_ROOT/expand_var_in_test_name.bats"
+  [ $status -eq 0 ]
+  [ "${lines[1]}" = "ok 1 test/suite: test with variable in name" ]
+}
+
+@test "handle quoted and unquoted test names" {
+  run bats "$FIXTURE_ROOT/quoted_and_unquoted_test_names.bats"
+  [ $status -eq 0 ]
+  [ "${lines[1]}" = "ok 1 single-quoted name" ]
+  [ "${lines[2]}" = "ok 2 double-quoted name" ]
+  [ "${lines[3]}" = "ok 3 unquoted name" ]
+}
+
+@test "list test number and description" {
+  run bats -l "$FIXTURE_ROOT/single_line.bats"
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "1 empty" ]
+  [ "${lines[1]}" = "2 passing" ]
+  [ "${lines[2]}" = "3 input redirection" ]
+  [ "${lines[3]}" = "4 failing" ]
+  [ "${#lines[*]}" = "4" ]
+}
+
+@test "list test name ID's" {
+  run bats -l names "$FIXTURE_ROOT/single_line.bats"
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "test_empty" ]
+  [ "${lines[1]}" = "test_passing" ]
+  [ "${lines[2]}" = "test_input_redirection" ]
+  [ "${lines[3]}" = "test_failing" ]
+  [ "${#lines[*]}" = "4" ]
+}
+
+@test "list test descriptions" {
+  run bats -l descriptions "$FIXTURE_ROOT/single_line.bats"
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "empty" ]
+  [ "${lines[1]}" = "passing" ]
+  [ "${lines[2]}" = "input redirection" ]
+  [ "${lines[3]}" = "failing" ]
+  [ "${#lines[*]}" = "4" ]
+}
+
+@test "run test at selected indices only" {
+  run bats -i 1-2,3 "$FIXTURE_ROOT/single_line.bats"
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "1..4" ]
+  [ "${lines[1]}" = "ok 1 empty" ]
+  [ "${lines[2]}" = "ok 2 passing" ]
+  [ "${lines[3]}" = "ok 3 input redirection" ]
+  [ "${lines[4]}" = "ok 4 # skip (4)" ]
+  [ "${#lines[*]}" = "5" ]
+}

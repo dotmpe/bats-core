@@ -9,7 +9,7 @@ version() {
 
 usage() {
   version
-  echo "Usage: bats [-c | -l] [-i <range>] [-p | -t] <test> [<test> ...]"
+  echo "Usage: bats [-c | -l] [-i <range>] [-p | -t] [-d] <test> [<test> ...]"
 }
 
 help() {
@@ -19,12 +19,13 @@ help() {
   echo "  containing Bats test files."
   echo
   echo "  -c, --count    Count the number of test cases without running any tests"
-  echo "  -l, --list [names|descriptions]"
-  echo "                 List only. Prints number followed by description by"
-  echo "                 default. "
-  echo "  -i, --index    Run tests at given position(s). Valid values include "
-  echo "                 single numbers, ranges, or CSV of those."
+  echo "  -d, --debug    Force output regardless of test result"
   echo "  -h, --help     Display this help message"
+  echo "  -i, --index    Run tests at given position(s). Valid values include "\
+"single numbers, ranges, or CSV of those"
+  echo "  -l, --list [names|descriptions]"
+  echo "                 List only, one test per line. Prints number and"\
+"description by default"
   echo "  -p, --pretty   Show results in pretty format (default for terminals)"
   echo "  -t, --tap      Show results in TAP format"
   echo "  -v, --version  Display the version number"
@@ -83,7 +84,7 @@ for arg in "$@"; do
   fi
 done
 
-unset count_flag index_flag pretty
+unset count_flag index_flag diag_flag pretty
 [ -t 0 ] && [ -t 1 ] && pretty="1"
 [ -n "$CI" ] && pretty=""
 
@@ -108,6 +109,9 @@ for option in "${options[@]}"; do
     ;;
   "c" | "count" )
     count_flag="-c"
+    ;;
+  "d" | "debug" )
+    diag_flag="-d"
     ;;
   "i" | "index" )
     index_flag="-i ${arguments[@]:0:1}"
@@ -156,8 +160,8 @@ set -o pipefail execfail
 if [ "$pretty" = "1" ]; then
   extended_syntax_flag="-x"
   formatter="bats-format-tap-stream"
-  exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
+  exec "$command" $count_flag $diag_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
 else
   extended_syntax_flag=""
-  exec "$command" $count_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}"
+  exec "$command" $count_flag $diag_flag $list_flag $index_flag $extended_syntax_flag "${filenames[@]}"
 fi

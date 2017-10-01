@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-version=0.4.1-mpe # bats-mpe
+version=0.4.0-bvb3 # bats-mpe
 
 version() {
   echo "Bats $version"

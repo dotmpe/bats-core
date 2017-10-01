@@ -1,6 +1,6 @@
 Bats: Bash Automated Testing System (fork)
 ============================================
-:Version: 0.4.2-mpe
+:Version: 0.4.0-bvb3
 :CI status (master):
   .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=master
 :CI status (original sstephenson/bats):
@@ -54,4 +54,19 @@ f_run_index
 
 f_list
   Added -l flag.
+
+features/duplicate-test-warning
+  Thinking about way to warn about duplicate tests.
+  FIXME: proper solution needs profiling, impact should be evaluated. Otherwise
+  some optimization, perhaps through preprocessing bats before install; making
+  code like this optional.
+
+  Don't want to slow down bats any more.
+
+features/mbland-optimized
+  Optimizations merged with master.
+
+  Issues: 'hidden' string positions after test description do not work anymore.
+
+
 

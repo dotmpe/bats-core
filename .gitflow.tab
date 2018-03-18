@@ -1,0 +1,13 @@
+#
+# double-brackets
+# dup-warning-#9
+# f_run_index
+# features/duplicate-test-warning
+# features/mbland-optimized
+
+# Treat this fork as downstream for official repos
+core/master master false
+master core-fork/master false
+
+#mbland-optimized
+sstephenson/master original false

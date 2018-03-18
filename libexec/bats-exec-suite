@@ -7,7 +7,7 @@ if [ "$1" = "-c" ]; then
   shift
 fi
 
-diag_flag=
+diag_flag=""
 if [ "$1" = "-d" ]; then
   diag_flag=$1
   shift
@@ -17,6 +17,12 @@ run_only_flag=""
 if [ "$1" = "-i" ]; then
   shift
   run_only_flag=$1
+  shift
+fi
+
+list_only_flag=""
+if [ "$1" = "-l" ]; then
+  list_only_flag=$1
   shift
 fi
 
@@ -30,7 +36,11 @@ trap "kill 0; exit 1" int
 
 count=0
 for filename in "$@"; do
-  let count+="$(bats-exec-test -c "$filename")"
+  while IFS= read -r line; do
+    if [[ "$line" =~ $BATS_TEST_PATTERN ]]; then
+      let count+=1
+    fi
+  done <"$filename"
 done
 
 if [ -n "$count_only_flag" ]; then

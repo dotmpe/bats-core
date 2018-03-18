@@ -1,6 +1,6 @@
 fixtures() {
   FIXTURE_ROOT="$BATS_TEST_DIRNAME/fixtures/$1"
-  RELATIVE_FIXTURE_ROOT="$(bats_trim_filename "$FIXTURE_ROOT")"
+  bats_trim_filename "$FIXTURE_ROOT" 'RELATIVE_FIXTURE_ROOT'
 }
 
 setup() {
@@ -9,6 +9,17 @@ setup() {
 
 filter_control_sequences() {
   "$@" | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'
+}
+
+if ! command -v tput >/dev/null; then
+  tput() {
+    printf '1000\n'
+  }
+  export -f tput
+fi
+
+emit_debug_output() {
+  printf '%s\n' 'output:' "$output" >&2
 }
 
 teardown() {

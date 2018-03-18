@@ -5,6 +5,37 @@ See new [ReadMe](ReadMe.rst), and also
 [Docker builds](/bvberkum/x-docker).
 
 ---
+## BATS-core: Bash Automated Testing System (2017)
+
+[![Build Status](https://travis-ci.org/bats-core/bats-core.svg?branch=master)](https://travis-ci.org/bats-core/bats-core)
+
+### Background:
+### What is this repo?
+**Tuesday, September 19, 2017:** This is a mirrored fork of [bats](https://github.com/sstephenson/bats), at [0360811](https://github.com/sstephenson/bats/commit/03608115df2071fff4eaaff1605768c275e5f81f). It was created via `git clone --bare` and `git push --mirror`.
+
+#### Why was it created?
+The original bats repository needed new maintainers, and has not been actively maintained since 2013. While there were volunteers for maintainers, attempts to organize issues, and outstanding PRs, the lack of write-access to the repo hindered progress severely.
+
+## What's the plan and why?
+The rough plan, originally [outlined here](https://github.com/sstephenson/bats/issues/150#issuecomment-323845404) is to create a new, mirrored mainline (this repo!). An excerpt:
+
+> **1. Roadmap 1.0:**
+> There are already existing high-quality PRs, and often-requested features and issues, especially here at [#196](https://github.com/sstephenson/bats/issues/196). Leverage these and **consolidate into a single roadmap**.
+>
+>**2. Create or choose a fork or *mirror* of this repo to use as the new mainline:**
+>Repoint existing PRs (whichever ones are possible) to the new mainline, get that repo to a stable 1.0. IMO we should create an organization and grant 2-3 people admin and write access.
+>
+
+Doing it this way accomplishes two things:
+1. Removes the dependency on the original maintainer
+2. Enables collaboration and contribution flow again
+3. Allows the possibility of merging back to original, or merging from original if or when the need arises
+4. Prevents lock-out by giving administrative access to more than one person, increases transferability
+
+## Misc
+- We are `#bats` on freenode
+
+---
 
 Bats is a [TAP](http://testanything.org)-compliant testing framework
 for Bash. It provides a simple way to verify that the UNIX programs
@@ -82,8 +113,8 @@ test cases in the file. The first run counts the number of test cases,
 then iterates over the test cases and executes each one in its own
 process.
 
-For more details about how Bats evaluates test files, see 
-[Bats Evaluation Process](https://github.com/sstephenson/bats/wiki/Bats-Evaluation-Process)
+For more details about how Bats evaluates test files, see
+[Bats Evaluation Process](https://github.com/bats-core/bats-core/wiki/Bats-Evaluation-Process)
 on the wiki.
 
 ### `run`: Test other commands
@@ -216,26 +247,52 @@ Check out a copy of the Bats repository. Then, either add the Bats
 command with the location to the prefix in which you want to install
 Bats. For example, to install Bats into `/usr/local`,
 
-    $ git clone https://github.com/sstephenson/bats.git
-    $ cd bats
+    $ git clone https://github.com/bats-core/bats-core.git
+    $ cd bats-core
     $ ./install.sh /usr/local
 
 Note that you may need to run `install.sh` with `sudo` if you do not
 have permission to write to the installation prefix.
 
+## Running Bats in Docker
+
+Check out a copy of the Bats repository, then build a container image:
+
+    $ git clone https://github.com/bats-core/bats-core.git
+    $ cd bats-core
+    $ docker build --tag bats:latest .
+
+This creates a local Docker image called `bats:latest` based on [Alpine
+Linux](https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md).
+To run Bats' internal test suite (which is in the container image at
+`/opt/bats/test`):
+
+    $ docker run -it bats:latest /opt/bats/test
+
+To run a test suite from your local machine, mount in a volume and direct
+Bats to its path inside the container:
+
+    $ docker run -it -v "$(pwd):/code" bats:latest /code/test
+
+This is a minimal image. If more tools are required this can be used as a
+base image in a Dockerfile using `FROM <Docker image>`.
+In the future there may be images based on Debian, and/or with more tools
+installed (`curl` and `openssl`, for example). If you require a specific
+configuration please search and +1 an issue or
+[raise a new issue](https://github.com/bats-core/bats-core/issues).
 
 ## Support
 
 The Bats source code repository is [hosted on
-GitHub](https://github.com/sstephenson/bats). There you can file bugs
+GitHub](https://github.com/bats-core/bats-core). There you can file bugs
 on the issue tracker or submit tested pull requests for review.
 
 For real-world examples from open-source projects using Bats, see
-[Projects Using Bats](https://github.com/sstephenson/bats/wiki/Projects-Using-Bats)
+[Projects Using Bats](https://github.com/bats-core/bats-core/wiki/Projects-Using-Bats)
 on the wiki.
 
 To learn how to set up your editor for Bats syntax highlighting, see
-[Syntax Highlighting](https://github.com/sstephenson/bats/wiki/Syntax-Highlighting)
+[Syntax Highlighting](https://github.com/bats-core/bats-core/wiki/Syntax-Highlighting)
 on the wiki.
 
 
@@ -295,5 +352,9 @@ on the wiki.
 
 ---
 
-© 2014 Sam Stephenson. Bats is released under an MIT-style license;
+© 2018 bats-core organization
+
+© 2014 Sam Stephenson
+
+Bats is released under an MIT-style license;
 see `LICENSE` for details.

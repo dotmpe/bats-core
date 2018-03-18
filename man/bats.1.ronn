@@ -5,7 +5,7 @@ bats(1) -- Bash Automated Testing System
 SYNOPSIS
 --------
 
-bats [-c | -l] [-i <range>] [-p | -t] <test> [<test> ...]
+bats [-c | -l [names|descriptions]] [-i <range>] [-p | -t] <test> [<test> ...]
 
 <test> is the path to a Bats test file, or the path to a directory
 containing Bats test files.
@@ -114,7 +114,7 @@ or `1` if one or more test cases fail.
 SEE ALSO
 --------
 
-Bats wiki: _https://github.com/sstephenson/bats/wiki/_
+Bats wiki: _https://github.com/bats\-core/bats\-core/wiki/_
 
 `bash`(1), `bats`(7)
 

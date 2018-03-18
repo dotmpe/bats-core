@@ -41,15 +41,24 @@ fixtures bats
 }
 
 @test "summary passing tests" {
-  run filter_control_sequences bats -p $FIXTURE_ROOT/passing.bats
+  run filter_control_sequences bats -p "$FIXTURE_ROOT/passing.bats"
   [ $status -eq 0 ]
   [ "${lines[1]}" = "1 test, 0 failures" ]
 }
 
 @test "summary passing and skipping tests" {
-  run filter_control_sequences bats -p $FIXTURE_ROOT/passing_and_skipping.bats
+  run filter_control_sequences bats -p "$FIXTURE_ROOT/passing_and_skipping.bats"
   [ $status -eq 0 ]
-  [ "${lines[2]}" = "2 tests, 0 failures, 1 skipped" ]
+  [ "${lines[3]}" = "3 tests, 0 failures, 2 skipped" ]
+}
+
+@test "tap passing and skipping tests" {
+  run filter_control_sequences bats --tap "$FIXTURE_ROOT/passing_and_skipping.bats"
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "1..3" ]
+  [ "${lines[1]}" = "ok 1 a passing test" ]
+  [ "${lines[2]}" = "ok 2 a skipped test with no reason # SKIP" ]
+  [ "${lines[3]}" = "ok 3 a skipped test with a reason # SKIP for a really good reason" ]
 }
 
 @test "summary passing and todo tests" {
@@ -59,20 +68,30 @@ fixtures bats
 }
 
 @test "summary passing and failing tests" {
-  run filter_control_sequences bats -p $FIXTURE_ROOT/failing_and_passing.bats
+  run filter_control_sequences bats -p "$FIXTURE_ROOT/failing_and_passing.bats"
   [ $status -eq 0 ]
   [ "${lines[4]}" = "2 tests, 1 failure" ]
 }
 
 @test "summary passing, failing and skipping tests" {
-  run filter_control_sequences bats -p $FIXTURE_ROOT/passing_failing_and_skipping.bats
+  run filter_control_sequences bats -p "$FIXTURE_ROOT/passing_failing_and_skipping.bats"
   [ $status -eq 0 ]
   [ "${lines[5]}" = "3 tests, 1 failure, 1 skipped" ]
+}
+
+@test "tap passing, failing and skipping tests" {
+  run filter_control_sequences bats --tap "$FIXTURE_ROOT/passing_failing_and_skipping.bats"
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "1..3" ]
+  [ "${lines[1]}" = "ok 1 a passing test" ]
+  [ "${lines[2]}" = "ok 2 a skipping test # SKIP" ]
+  [ "${lines[3]}" = "not ok 3 a failing test" ]
 }
 
 @test "one failing test" {
   run bats "$FIXTURE_ROOT/failing.bats"
   [ $status -eq 1 ]
+  emit_debug_output
   [ "${lines[0]}" = '1..1' ]
   [ "${lines[1]}" = 'not ok 1 a failing test' ]
   [ "${lines[2]}" = "# (in test file $RELATIVE_FIXTURE_ROOT/failing.bats, line 4)" ]
@@ -92,6 +111,7 @@ fixtures bats
 @test "failing test with significant status" {
   STATUS=2 run bats "$FIXTURE_ROOT/failing.bats"
   [ $status -eq 1 ]
+  emit_debug_output
   [ "${lines[3]}" = "#   \`eval \"( exit \${STATUS:-1} )\"' failed with status 2" ]
 }
 
@@ -159,6 +179,7 @@ fixtures bats
   cd "$TMP"
   run bats "$FIXTURE_ROOT/failing.bats"
   [ $status -eq 1 ]
+  emit_debug_output
   [ "${lines[2]}" = "# (in test file $FIXTURE_ROOT/failing.bats, line 4)" ]
 }
 
@@ -239,14 +260,14 @@ fixtures bats
 }
 
 @test "skipped tests" {
-  run ./libexec/bats "$FIXTURE_ROOT/skipped.bats"
+  run bats "$FIXTURE_ROOT/skipped.bats"
   [ $status -eq 0 ]
   [ "${lines[1]}" = "ok 1 a skipped test # SKIP" ]
   [ "${lines[2]}" = "ok 2 a skipped test with a reason # SKIP a reason" ]
 }
 
 @test "todo tests" {
-  run ./libexec/bats "$FIXTURE_ROOT/todos.bats"
+  run bats "$FIXTURE_ROOT/todos.bats"
   [ $status -eq 0 ]
   [ "${lines[1]}" = "ok 1 a todo test # TODO" ]
   [ "${lines[2]}" = "ok 2 a todo test with a reason # TODO a reason" ]
@@ -328,7 +349,7 @@ fixtures bats
 }
 
 @test "run test at selected indices only" {
-  run ./libexec/bats -i 1-2,3 "$FIXTURE_ROOT/single_line.bats"
+  run bats -i 1-2,3 "$FIXTURE_ROOT/single_line.bats"
   [ $status -eq 0 ]
   [ "${lines[0]}" = "1..4" ]
   [ "${lines[1]}" = "ok 1 empty" ]
@@ -336,4 +357,84 @@ fixtures bats
   [ "${lines[3]}" = "ok 3 input redirection" ]
   [ "${lines[4]}" = "ok 4 # SKIP" ]
   [ "${#lines[*]}" = "5" ]
+}
+
+@test "duplicate tests cause a warning on stderr" {
+  run bats "$FIXTURE_ROOT/duplicate-tests.bats"
+  [ $status -eq 1 ]
+  case "${lines[0]}" in
+    "bats warning: duplicate test name(s) in /"*": test_gizmo_test " ) true ;; * ) false ;; esac
+  [ "${#lines[*]}" = "7" ]
+}
+
+@test "expand variables in test name" {
+  SUITE='test/suite' run bats "$FIXTURE_ROOT/expand_var_in_test_name.bats"
+  [ $status -eq 0 ]
+  [ "${lines[1]}" = "ok 1 test/suite: test with variable in name" ]
+}
+
+@test "handle quoted and unquoted test names" {
+  run bats "$FIXTURE_ROOT/quoted_and_unquoted_test_names.bats"
+  [ $status -eq 0 ]
+  [ "${lines[1]}" = "ok 1 single-quoted name" ]
+  [ "${lines[2]}" = "ok 2 double-quoted name" ]
+  [ "${lines[3]}" = "ok 3 unquoted name" ]
+}
+
+@test 'ensure compatibility with unofficial Bash strict mode' {
+  local expected='ok 1 unofficial Bash strict mode conditions met'
+
+  # Run Bats under `set -u` to catch as many unset variable accesses as
+  # possible.
+  run bash -u "${BATS_TEST_DIRNAME%/*}/libexec/bats" \
+    "$FIXTURE_ROOT/unofficial_bash_strict_mode.bats"
+  if [[ "$status" -ne '0' || "${lines[1]}" != "$expected" ]]; then
+    cat <<END_OF_ERR_MSG
+
+This test failed because the Bats internals are violating one of the
+constraints imposed by:
+
+--------
+$(< "$FIXTURE_ROOT/unofficial_bash_strict_mode.bash")
+--------
+
+See:
+- https://github.com/sstephenson/bats/issues/171
+- http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+If there is no error output from the test fixture, run the following to
+debug the problem:
+
+  $ bash -u bats $RELATIVE_FIXTURE_ROOT/unofficial_bash_strict_mode.bats
+
+If there's no error output even with this command, make sure you're using the
+latest version of Bash, as versions before 4.1-alpha may not produce any error
+output for unset variable accesses.
+
+If there's no output even when running the latest Bash, the problem may reside
+in the DEBUG trap handler. A particularly sneaky issue is that in Bash before
+4.1-alpha, an expansion of an empty array, e.g. "\${FOO[@]}", is considered
+an unset variable access. The solution is to add a size check before the
+expansion, e.g. [[ "\${#FOO[@]}" -ne '0' ]].
+
+END_OF_ERR_MSG
+    emit_debug_output && return 1
+  fi
+}
+
+@test "parse @test lines with various whitespace combinations" {
+  run bats "$FIXTURE_ROOT/whitespace.bats"
+  emit_debug_output
+  [ $status -eq 0 ]
+  [ "${lines[1]}" = 'ok 1 no extra whitespace' ]
+  [ "${lines[2]}" = 'ok 2 tab at beginning of line' ]
+  [ "${lines[3]}" = 'ok 3 tab before description' ]
+  [ "${lines[4]}" = 'ok 4 tab before opening brace' ]
+  [ "${lines[5]}" = 'ok 5 tabs at beginning of line and before description' ]
+  [ "${lines[6]}" = 'ok 6 tabs at beginning, before description, before brace' ]
+  [ "${lines[7]}" = 'ok 7 extra whitespace around single-line test' ]
+  [ "${lines[8]}" = 'ok 8 no extra whitespace around single-line test' ]
+  [ "${lines[9]}" = 'ok 9 parse unquoted name between extra whitespace' ]
+  [ "${lines[10]}" = 'ok 10 {' ]  # unquoted single brace is a valid description
+  [ "${lines[11]}" = 'ok 11 ' ]   # empty name from single quote
 }

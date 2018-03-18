@@ -1,10 +1,13 @@
-
 - main: bats-mpe
   id: bats-mpe
   version: 0.4.0-bvb3 # bats-mpe
   scripts:
     install:
-      gem install ronn
+      - gem install ronn
+    init:
+      - htd package update
+      - htd package remotes-init
+      - vc regenerate
     check:
       - git-versioning check
       - test man/bats.1 -nt man/bats.1.ronn
@@ -15,4 +18,8 @@
       - ./install.sh /usr/local
     test:
       - bats test/
-
+  repositories:
+    core: git@github.com:bats-core/bats-core.git
+    core-fork: git@github.com:bvberkum/bats-core.git
+    origin: git@github.com:bvberkum/bats.git
+    sstephenson: https://github.com/sstephenson/bats.git

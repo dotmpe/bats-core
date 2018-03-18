@@ -45,7 +45,7 @@ pass() {
 }
 
 skip() {
-  local reason="$1"
+  local reason="$*"
   [ -z "$reason" ] || reason=": $reason"
   go_to_column 0
   printf " - %s (skipped%s)" "$name" "$reason"
@@ -53,7 +53,7 @@ skip() {
 }
 
 TODO() {
-  local reason="$1"
+  local reason="$*"
   [ -z "$reason" ] || reason=": $reason"
   go_to_column 0
   printf " - %s (TODO%s)" "$name" "$reason"
@@ -158,12 +158,12 @@ while IFS= read -r line; do
     flush
     ;;
   "ok "* )
-    todo_expr="ok $index # TODO (\(([^)]*)\))?"
+    todo_expr="ok $index [^#]*# TODO( (.*))?$"
     if [[ "$line" =~ $todo_expr ]]; then
       let todo+=1
       buffer TODO "${BASH_REMATCH[2]}"
     else
-    skip_expr="ok $index # skip (\(([^)]*)\))?"
+    skip_expr="ok $index [^#]*# SKIP( (.*))?$"
     if [[ "$line" =~ $skip_expr ]]; then
       let skipped+=1
       buffer skip "${BASH_REMATCH[2]}"

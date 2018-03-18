@@ -124,12 +124,14 @@ teardown() {
 }
 
 skip() {
+  test -z "$2" || set -- "$*"
   BATS_TEST_SKIPPED=${1:-1}
   BATS_TEST_COMPLETED=1
   exit 0
 }
 
 TODO() {
+  test -z "$2" || set -- "$*"
   BATS_TEST_TODO=${1:-1}
   BATS_TEST_COMPLETED=1
   exit 0
@@ -323,13 +325,13 @@ bats_exit_trap() {
   if [ -n "$BATS_TEST_TODO" ]; then
     skipped=" # TODO"
     if [ "1" != "$BATS_TEST_TODO" ]; then
-      skipped+=" ($BATS_TEST_TODO)"
+      skipped+=" $BATS_TEST_TODO"
     fi
   fi
   if [ -n "$BATS_TEST_SKIPPED" ]; then
-    skipped=" # skip"
+    skipped=" # SKIP"
     if [ "1" != "$BATS_TEST_SKIPPED" ]; then
-      skipped+=" ($BATS_TEST_SKIPPED)"
+      skipped+=" $BATS_TEST_SKIPPED"
     fi
   fi
 
@@ -343,7 +345,7 @@ bats_exit_trap() {
     sed -e "s/^/# /" < "$BATS_OUT" >&3
     status=1
   else
-    echo "ok ${BATS_TEST_NUMBER}${skipped} ${BATS_TEST_DESCRIPTION}" >&3
+    echo "ok ${BATS_TEST_NUMBER} ${BATS_TEST_DESCRIPTION}${skipped}" >&3
     if test -n "$BATS_TEST_DIAGNOSTICS" -a -s "$BATS_OUT"
     then
       sed -e "s/^/# /" < "$BATS_OUT" >&3
@@ -360,7 +362,7 @@ bats_skip_test()
   if [ -n "$BATS_EXTENDED_SYNTAX" ]; then
     echo "begin $test_number"
   fi
-  echo "ok $test_number # skip ($test_number)"
+  echo "ok $test_number # SKIP"
   let test_number+=1
 }
 

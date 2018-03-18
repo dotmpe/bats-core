@@ -239,17 +239,17 @@ fixtures bats
 }
 
 @test "skipped tests" {
-  run bats "$FIXTURE_ROOT/skipped.bats"
+  run ./libexec/bats "$FIXTURE_ROOT/skipped.bats"
   [ $status -eq 0 ]
-  [ "${lines[1]}" = "ok 1 # skip a skipped test" ]
-  [ "${lines[2]}" = "ok 2 # skip (a reason) a skipped test with a reason" ]
+  [ "${lines[1]}" = "ok 1 a skipped test # SKIP" ]
+  [ "${lines[2]}" = "ok 2 a skipped test with a reason # SKIP a reason" ]
 }
 
 @test "todo tests" {
-  run bats "$FIXTURE_ROOT/todos.bats"
+  run ./libexec/bats "$FIXTURE_ROOT/todos.bats"
   [ $status -eq 0 ]
-  [ "${lines[1]}" = "ok 1 # TODO a todo test" ]
-  [ "${lines[2]}" = "ok 2 # TODO (a reason) a todo test with a reason" ]
+  [ "${lines[1]}" = "ok 1 a todo test # TODO" ]
+  [ "${lines[2]}" = "ok 2 a todo test with a reason # TODO a reason" ]
 }
 
 @test "extended syntax" {
@@ -328,12 +328,12 @@ fixtures bats
 }
 
 @test "run test at selected indices only" {
-  run bats -i 1-2,3 "$FIXTURE_ROOT/single_line.bats"
+  run ./libexec/bats -i 1-2,3 "$FIXTURE_ROOT/single_line.bats"
   [ $status -eq 0 ]
   [ "${lines[0]}" = "1..4" ]
   [ "${lines[1]}" = "ok 1 empty" ]
   [ "${lines[2]}" = "ok 2 passing" ]
   [ "${lines[3]}" = "ok 3 input redirection" ]
-  [ "${lines[4]}" = "ok 4 # skip (4)" ]
+  [ "${lines[4]}" = "ok 4 # SKIP" ]
   [ "${#lines[*]}" = "5" ]
 }

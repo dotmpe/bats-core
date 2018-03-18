@@ -1,6 +1,6 @@
 Bats: Bash Automated Testing System (fork)
 ============================================
-:Version: 0.4.0-bvb3
+:Version: 0.4.0-bvb4
 :CI status (master):
   .. image:: https://travis-ci.org/bvberkum/bats.svg?branch=master
 :CI status (original sstephenson/bats):

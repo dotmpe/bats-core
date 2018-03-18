@@ -1,6 +1,6 @@
 - main: bats-mpe
   id: bats-mpe
-  version: 0.4.0-bvb3 # bats-mpe
+  version: 0.4.0-bvb4 # bats-mpe
   scripts:
     install:
       - gem install ronn

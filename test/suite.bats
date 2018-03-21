@@ -5,8 +5,9 @@ fixtures suite
 
 @test "running a suite with no test files" {
   run bats "$FIXTURE_ROOT/empty"
-  [ $status -eq 0 ]
-  [ "$output" = "1..0" ]
+  {
+    [ $status -eq 0 ] && [ "$output" = "1..0" ] 
+  } || stdfail
 }
 
 @test "running a suite with one test file" {

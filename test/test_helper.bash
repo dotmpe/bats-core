@@ -66,7 +66,7 @@ type TODO >/dev/null 2>&1 || { # tasks:no-check
 type stdfail >/dev/null 2>&1 || {
   stdfail()
   {
-    test -n "$1" || set -- "Unexpected. Status"
+    test $# -gt 0 -a -n "$1" || set -- "Unexpected. Status"
     fail "$1: $status, output(${#lines[@]}) is '${lines[*]}'"
   }
 }

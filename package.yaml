@@ -1,6 +1,6 @@
-- main: bats-mpe
-  id: bats-mpe
-  version: 0.4.0-bvb5 # bats-mpe
+- main: bats-bvb
+  id: bats-bvb
+  version: 0.4.0-bvb5 # bats-bvb
   scripts:
     install:
       - gem install ronn
@@ -18,8 +18,10 @@
       - ./install.sh /usr/local
     test:
       - bats test/
+  urls:
+    wiki: git@github.com:bats-core/bats-core.wiki.git
+    wiki-fork: git@github.com:bvberkum/bats-core.wiki.git
   repositories:
     core: git@github.com:bats-core/bats-core.git
-    core-fork: git@github.com:bvberkum/bats-core.git
-    origin: git@github.com:bvberkum/bats.git
+    origin: git@github.com:bvberkum/bats-core.git
     sstephenson: https://github.com/sstephenson/bats.git

@@ -140,7 +140,7 @@ if [ "${#arguments[@]}" -eq 0 ]; then
   exit 1
 fi
 
-export filenames=()
+filenames=()
 for filename in "${arguments[@]}"; do
   expand_path "$filename" 'filename'
 
@@ -162,9 +162,9 @@ else
 fi
 
 if [ -z "$pretty" ]; then
-  exec "$command" $count_flag "${filenames[@]}"
+  exec "$command" $count_flag "${filenames[@]-}"
 else
   extended_syntax_flag="-x"
   formatter="bats-format-tap-stream"
-  exec "$command" $count_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
+  exec "$command" $count_flag $extended_syntax_flag "${filenames[@]-}" | "$formatter"
 fi

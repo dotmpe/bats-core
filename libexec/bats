@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-set -e
-set -eo pipefail
+set -euo pipefail
 
 version() {
   echo "Bats 0.4.0"
@@ -139,7 +138,7 @@ if [ "${#arguments[@]}" -eq 0 ]; then
   exit 1
 fi
 
-filenames=()
+declare -a filenames
 for filename in "${arguments[@]}"; do
   expand_path "$filename" 'filename'
 

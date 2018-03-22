@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-set -euo pipefail
+set -eo pipefail
 
 version() {
   echo "Bats 0.4.0"

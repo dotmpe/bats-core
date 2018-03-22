@@ -3,10 +3,11 @@
 load test_helper
 fixtures suite
 
-@test "running a suite with no test files" {
+@test "running a suite with no test files fails and prints usage" {
   run bats "$FIXTURE_ROOT/empty"
-  [ $status -eq 0 ]
-  [ "$output" = "1..0" ]
+  {
+    [ $status -eq 1 ] && fnmatch "Bats* Usage:*" "${lines[*]}"
+  } || stdfail
 }
 
 @test "running a suite with one test file" {

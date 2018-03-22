@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
+# FIXME: interferes  with current option+argument parsing
+#IFS=$'\n\t'
 
 version=0.4.0-bvb5 # bats-bvb
 
@@ -181,17 +183,23 @@ for filename in "${arguments[@]}"; do
   fi
 done
 
+if [ "${#filenames[@]}" -eq 0 ]; then
+  usage >&2
+  exit 1
+fi
+
 if [ "${#filenames[@]}" -eq 1 ]; then
   command="bats-exec-test"
 else
   command="bats-exec-suite"
 fi
 
+# XXX: not sure why this execfail does work at Alpine
 set -o pipefail execfail
 if [ -z "$pretty" ]; then
-  exec "$command" $count_flag $diag_flag $index_flag $list_flag "${filenames[@]}"
+  exec "$command" $count_flag $diag_flag $index_flag $list_flag "${filenames[@]-}"
 else
   extended_syntax_flag="-x"
   formatter="bats-format-tap-stream"
-  exec "$command" $count_flag $diag_flag $index_flag $list_flag $extended_syntax_flag "${filenames[@]}" | "$formatter"
+  exec "$command" $count_flag $diag_flag $index_flag $list_flag $extended_syntax_flag "${filenames[@]-}" | "$formatter"
 fi

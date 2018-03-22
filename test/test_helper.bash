@@ -71,3 +71,8 @@ type stdfail >/dev/null 2>&1 || {
     fail "$1: $status, output(${#lines[@]}) is '${lines[*]}'"
   }
 }
+
+fnmatch() # Glob Str
+{
+  case "$2" in $1 ) return 0 ;; *) return 1 ;; esac
+}

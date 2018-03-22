@@ -138,7 +138,7 @@ if [ "${#arguments[@]}" -eq 0 ]; then
   exit 1
 fi
 
-declare -a filenames
+filenames=()
 for filename in "${arguments[@]}"; do
   expand_path "$filename" 'filename'
 

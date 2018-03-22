@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+#set -o execfail
 IFS=$'\n\t'
 
 version() {
@@ -160,7 +161,6 @@ else
   command="bats-exec-suite"
 fi
 
-set -o execfail
 if [ -z "$pretty" ]; then
   exec "$command" $count_flag "${filenames[@]}"
 else

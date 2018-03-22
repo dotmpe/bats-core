@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
 
 version() {
   echo "Bats 0.4.0"
@@ -138,7 +139,7 @@ if [ "${#arguments[@]}" -eq 0 ]; then
   exit 1
 fi
 
-filenames=()
+export filenames=()
 for filename in "${arguments[@]}"; do
   expand_path "$filename" 'filename'
 
@@ -159,7 +160,7 @@ else
   command="bats-exec-suite"
 fi
 
-set -o pipefail execfail
+set -o execfail
 if [ -z "$pretty" ]; then
   exec "$command" $count_flag "${filenames[@]}"
 else

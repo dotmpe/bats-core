@@ -147,10 +147,12 @@ diag() {
 }
 
 fail() {
-  if test -n "$1" 
-  then
-    echo "Failed: $1" >>"$BATS_OUT"
-  fi
+  printf "Failed: " >>"$BATS_OUT"
+  while test $# -gt 0
+  do
+          echo "$1"
+          shift
+  done >>"$BATS_OUT"
   exit 0
 }
 

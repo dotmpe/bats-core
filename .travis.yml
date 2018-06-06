@@ -10,10 +10,10 @@ services:
 script:
 - bash -c 'time bin/bats --tap test/{bats,suite}.bats'
 - test -x "$(which docker)" && {
-    docker build --tag bats:latest .
-    docker run -it bats:latest --tap /opt/bats/test/{bats,suite}.bats
-    bash -c 'time bin/bats --tap test/docker.bats'
-  }
+    docker build --tag bats:latest . &&
+    docker run -it bats:latest --tap /opt/bats/test/{bats,suite}.bats &&
+    bash -c 'time bin/bats --tap test/docker.bats' || return $?;
+  } || true
 
 notifications:
   email:

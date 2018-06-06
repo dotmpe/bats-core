@@ -8,12 +8,12 @@ services:
   - docker
 
 script:
-- |
-  bash -c 'time bin/bats --tap test'
-  if [[ "$TRAVIS_OS_NAME" == 'linux' ]]; then
+- bash -c 'time bin/bats --tap test/{bats,suite}.bats'
+- test -x "$(which docker)" && {
     docker build --tag bats:latest .
-    docker run -it bats:latest --tap /opt/bats/test
-  fi
+    docker run -it bats:latest --tap /opt/bats/test/{bats,suite}.bats
+    bash -c 'time bin/bats --tap test/docker.bats'
+  }
 
 notifications:
   email:

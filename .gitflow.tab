@@ -1,3 +1,8 @@
+# UPSTREAM DOWNSTREAM ISFEATURE
+
+# Treat this fork as downstream for official repos
+core/master master false
+master core false
 #
 # double-brackets
 # dup-warning-#9
@@ -5,9 +10,7 @@
 # features/duplicate-test-warning
 # features/mbland-optimized
 
-# Treat this fork as downstream for official repos
-core/master master false
-master core-fork/master false
+master forks/bvb-dev false
 
 #mbland-optimized
 sstephenson/master original false

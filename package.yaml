@@ -26,5 +26,6 @@
     core: git@github.com:bats-core/bats-core.git
     origin: git@github.com:bvberkum/bats-core.git
     sstephenson: https://github.com/sstephenson/bats.git
-
+  dist:
+    - origin
 # git-versioning main: bats-bvb

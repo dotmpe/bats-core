@@ -1,0 +1,21 @@
+# UPSTREAM DOWNSTREAM ISFEATURE
+
+# Treat this fork as downstream for official repos
+core/master master false
+master core false
+
+# Rebase current dev branch on core/master
+master forks/bvb-dev false
+forks/bvb-dev forks/bvb-dev-2018-09-19
+
+
+# double-brackets
+# dup-warning-#9
+# f_run_index
+# features/duplicate-test-warning
+# features/mbland-optimized
+
+# Discarded
+#mbland-optimized
+sstephenson/master forks/bvb-dev-2016-02-19 false # Original dev fork
+sstephenson/master original false

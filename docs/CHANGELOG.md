@@ -11,9 +11,16 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+## [1.1.0-bvb1] - 2018-09-19
+
+### Added
 * docs/CHANGELOG.md and docs/releasing.md (#122)
 * The `-f, --filter` flag to run only the tests matching a regular expression
   (#126)
+* Added -l|--list option to list names per test and suite.
 
 ### Changed
 * AppVeyor builds are now semver-compliant (#123)
@@ -133,7 +140,8 @@ Changes:
 
 * Initial public release.
 
-[Unreleased]: https://github.com/bats-core/bats-core/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/bats-core/bats-core/compare/v1.1.0-bvb1...HEAD
+[1.1.0]: https://github.com/bats-core/bats-core/compare/v1.0.2...v1.1.0-bvb1
 [1.1.0]: https://github.com/bats-core/bats-core/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/bats-core/bats-core/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/bats-core/bats-core/compare/v1.0.0...v1.0.1

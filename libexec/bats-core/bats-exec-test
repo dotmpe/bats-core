@@ -2,6 +2,7 @@
 set -eET
 
 BATS_COUNT_ONLY=''
+BATS_LIST_ONLY=''
 BATS_TEST_FILTER=''
 BATS_EXTENDED_SYNTAX=''
 
@@ -16,6 +17,10 @@ while [[ "$#" -ne 0 ]]; do
     ;;
   -f)
     BATS_TEST_FILTER="$2"
+    shift
+    ;;
+  -l)
+    BATS_LIST_ONLY="$2"
     shift
     ;;
   -x)
@@ -364,6 +369,32 @@ bats_perform_test() {
   fi
 }
 
+bats_print_test() {
+  BATS_TEST_NAME="$1"
+  if [ "$(type -t "$BATS_TEST_NAME" || true)" = "function" ]; then
+    BATS_TEST_NUMBER="$2"
+    if [ -z "$BATS_TEST_NUMBER" ]; then
+      BATS_TEST_NUMBER="1"
+    fi
+
+    (
+      bats_test_begin() { echo "$1"; exit ; }
+      if test "$BATS_LIST_ONLY" = "names"
+      then
+        echo "$BATS_TEST_NAME"
+      else if test "$BATS_LIST_ONLY" = "descriptions"
+      then
+        echo "$($BATS_TEST_NAME)"
+      else
+        echo "$BATS_TEST_NUMBER $($BATS_TEST_NAME)"
+      fi; fi
+    )
+  else
+    echo "bats: unknown test name \`$BATS_TEST_NAME'" >&2
+    exit 1
+  fi
+}
+
 if [[ -z "$TMPDIR" ]]; then
   BATS_TMPDIR='/tmp'
 else
@@ -432,7 +463,15 @@ if [[ "$#" -eq 0 ]]; then
   if [[ -n "$BATS_COUNT_ONLY" ]]; then
     printf '%d\n' "${#BATS_TEST_NAMES[@]}"
   else
-    bats_perform_tests "${BATS_TEST_NAMES[@]}"
+    if [ -n "$BATS_LIST_ONLY" ]; then
+      for x in "${BATS_TEST_NAMES[@]}"
+      do
+        bats_print_test "$x" "$BATS_TEST_NUMBER"
+        BATS_TEST_NUMBER=$(( $BATS_TEST_NUMBER + 1 ))
+      done
+    else
+      bats_perform_tests "${BATS_TEST_NAMES[@]}"
+    fi
   fi
 else
   bats_evaluate_preprocessed_source

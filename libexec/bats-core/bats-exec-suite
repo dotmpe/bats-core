@@ -4,6 +4,7 @@ set -e
 count_only_flag=''
 extended_syntax_flag=''
 filter=''
+list=''
 flags=()
 
 while [[ "$#" -ne 0 ]]; do
@@ -14,6 +15,11 @@ while [[ "$#" -ne 0 ]]; do
   -f)
     filter="$2"
     flags+=('-f' "$filter")
+    shift
+    ;;
+  -l)
+    list="$2"
+    flags+=('-l' "$2")
     shift
     ;;
   -x)
@@ -47,33 +53,45 @@ if [[ -n "$count_only_flag" ]]; then
   exit
 fi
 
+test -n "$list" ||
 printf '1..%d\n' "$count"
 status=0
 offset=0
 for filename in "$@"; do
   index=0
   {
-    IFS= read -r # 1..n
-    while IFS= read -r line; do
-      case "$line" in
-      'begin '* )
+    if [[ "$list" != "" ]]; then
+      while IFS=' ' read -r i descr; do
+        case "$i" in
+          [0-9]*) ;;
+          *) echo "Unrecognized line: '$i $descr'" >&2 ; exit 1 ;;
+        esac
         ((++index))
-        printf '%s\n' "${line/ $index / $(($offset + $index)) }"
-        ;;
-      'ok '* | 'not ok '* )
-        if [[ -z "$extended_syntax_flag" ]]; then
+        printf '%i %s\n' "$(($offset + $index))" "$filename $descr"
+      done
+    else
+      IFS= read -r # 1..n
+      while IFS= read -r line; do
+        case "$line" in
+        'begin '* )
           ((++index))
-        fi
-        printf '%s\n' "${line/ $index / $(($offset + $index)) }"
-        if [[ "${line:0:6}" == 'not ok' ]]; then
-          status=1
-        fi
-        ;;
-      * )
-        printf '%s\n' "$line"
-        ;;
-      esac
-    done
+          printf '%s\n' "${line/ $index / $(($offset + $index)) }"
+          ;;
+        'ok '* | 'not ok '* )
+          if [[ -z "$extended_syntax_flag" ]]; then
+            ((++index))
+          fi
+          printf '%s\n' "${line/ $index / $(($offset + $index)) }"
+          if [[ "${line:0:6}" == 'not ok' ]]; then
+            status=1
+          fi
+          ;;
+        * )
+          printf '%s\n' "$line"
+          ;;
+        esac
+      done
+    fi
   } < <( bats-exec-test "${flags[@]}" "$filename" )
   offset=$(($offset + $index))
 done

@@ -52,7 +52,7 @@ f_run_index
     Index starts at 0. Ranges are given as '<from>-<to>'.
     Multiple positions or ranges are added separated by ','.
 
-f_list
+features/list-name
   Added -l flag.
 
 features/duplicate-test-warning

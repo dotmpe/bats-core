@@ -19,6 +19,11 @@
       - ./install.sh /usr/local
     test:
       - ./bin/bats test
+    todo.txt:
+      - htd tasks --Check-All-Tags --Check-All-Files --update
+  pd-meta:
+    tasks:
+      document: todo.txt
   urls:
     wiki: git@github.com:bats-core/bats-core.wiki.git
     wiki-fork: git@github.com:bvberkum/bats-core.wiki.git

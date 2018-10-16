@@ -28,9 +28,11 @@
     wiki: git@github.com:bats-core/bats-core.wiki.git
     wiki-fork: git@github.com:bvberkum/bats-core.wiki.git
   repositories:
-    core: git@github.com:bats-core/bats-core.git
     origin: git@github.com:bvberkum/bats-core.git
+    core: https://github.com/bats-core/bats-core.git
     sstephenson: https://github.com/sstephenson/bats.git
+    tpraxl: https://github.com/tpraxl/bats-core.git
+    tterranigma: https://github.com/tterranigma/bats-core.git
   dist:
     - origin
 # git-versioning main: bats-bvb

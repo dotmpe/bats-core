@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eET
 
+BATS_PREPROCESS=bats-preprocess
+
 BATS_COUNT_ONLY=''
 BATS_TEST_FILTER=''
 BATS_EXTENDED_SYNTAX=''
@@ -11,6 +13,10 @@ BATS_PERFORM_TEST_CMD=("$0")
 
 while [[ "$#" -ne 0 ]]; do
   case "$1" in
+  -P)
+    BATS_PREPROCESS="$2"
+    shift
+    ;;
   -c)
     BATS_COUNT_ONLY=1
     ;;
@@ -376,7 +382,7 @@ BATS_OUT="${BATS_TMPNAME}.out"
 
 bats_preprocess_source() {
   BATS_TEST_SOURCE="${BATS_TMPNAME}.src"
-  . bats-preprocess <<< "$(< "$BATS_TEST_FILENAME")"$'\n' > "$BATS_TEST_SOURCE"
+  . $BATS_PREPROCESS <<< "$(< "$BATS_TEST_FILENAME")"$'\n' > "$BATS_TEST_SOURCE"
   trap 'bats_cleanup_preprocessed_source' err exit
   trap 'bats_cleanup_preprocessed_source; exit 1' int
 

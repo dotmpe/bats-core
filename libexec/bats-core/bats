@@ -32,6 +32,8 @@ Usage: $cmd [-cr] [-f <regex>] [-p | -t] <test>...
   -p, --pretty     Show results in pretty format (default for terminals)
   -r, --recursive  Include tests in subdirectories
   -t, --tap        Show results in TAP format
+  -P, --override-preprocess
+                   ..
   -v, --version    Display the version number
 
   For more information, see https://github.com/bats-core/bats-core
@@ -114,6 +116,10 @@ while [[ "$#" -ne 0 ]]; do
     ;;
   -p|--pretty)
     pretty=1
+    ;;
+  -P|--override-preprocess)
+    shift
+    flags+=('-P' "$1")
     ;;
   -*)
     abort "Bad command line option '$1'"

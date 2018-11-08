@@ -28,8 +28,10 @@
 
 
 # XXX: Static context makes a data-provider (to run at pre-proc time) a bit
-# limited. Best keep to a limited @*.... { ... } syntax language. Current
-# transform strategy is to rewrite only @-line part, and append some
+# limited. Best keep to a processor for some restricted @*.... { ... } syntax.
+# Current definition could be relaxed a little, curious about bwc though.
+#
+# Transform strategy is to rewrite only @-line part, and append some
 # registration calls after flushing the entire script
 
 #@preload my-data
@@ -41,8 +43,6 @@ load my
   run echo "$line"
   test "${lines[*]}" = "some line"
 } 
-
-# XXX:
 
 @test:outline:'my-data tpl-data.txt':first:second "Builtin outline support II.b" {
 

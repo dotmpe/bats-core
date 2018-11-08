@@ -2,6 +2,8 @@
 
 set -e
 
+# Experiment with static-bats pre-proc a bit
+
 export BATS_CASE_PREFID=@test
 export BATS_TEST_PATTERN="[[:blank:]]*$BATS_CASE_PREFID"
 export BATS_MODIFIER_PATTERN="((:[^:]+)|(:'[^']+'))+"
@@ -13,6 +15,8 @@ export BATS_TEST_FILTER=
 
 exit $?
 
+
+# List external deps
 for x in libexec/bats-core/*
 do
   echo $x
@@ -41,8 +45,6 @@ done
 
   echo
 done
-exit $?
-
 exit $?
 
 

@@ -33,23 +33,49 @@ bats_encode_test_name() {
 
 tests=()
 
+# Set function-name for bootstrapping test-case call
+test -n "$bats_test_begin" || bats_test_begin=bats_test_begin
+
+# Set function-name for registering new Bats test case
+test -n "$bats_test_function" || bats_test_function=bats_test_function
+
 while IFS= read -r line; do
+  #echo "line='$line'" >&2
   line="${line//$'\r'}"
-  if [[ "$line" =~ $BATS_TEST_PATTERN ]]; then
-    name="${BASH_REMATCH[1]#[\'\"]}"
-    name="${name%[\'\"]}"
+  if [[ "$line" =~ ^$BATS_TEST_PATTERN$BATS_MODIFIER_PATTERN$BATS_TEST_NAME_PATTERN$ ]]; then
+
+    echo "'${BASH_REMATCH[*]}'"
+    continue
+
+    dir="${BASH_REMATCH[1]}"
+    #eval=BASH_REMATCH[2]#[\'\"]}"
+    case "$dir" in
+
+      outline ) #
+          echo "${BASH_REMATCH[2]}"
+        ;;
+
+      * )
+          echo "'$dir' name=$name enc=$encoded_name" >&2
+        ;;
+
+    esac
+
+  else
+  if [[ "$line" =~ ^$BATS_TEST_PATTERN$BATS_TEST_NAME_PATTERN$ ]]; then
+    name="${BASH_REMATCH[1]}"
     body="${BASH_REMATCH[2]}"
     bats_encode_test_name "$name" 'encoded_name'
-    printf '%s() { bats_test_begin "%s"; %s\n' "$encoded_name" "$name" "$body"
+    printf '%s() { %s %s; %s\n' "$encoded_name" "$bats_test_begin" "$name" "$body"
 
     if [[ -z "$BATS_TEST_FILTER" || "$name" =~ $BATS_TEST_FILTER ]]; then
       tests+=("$encoded_name")
     fi
   else
     printf '%s\n' "$line"
-  fi
+  fi ; fi
 done
 
 for test_name in "${tests[@]}"; do
-  printf 'bats_test_function %s\n' "$test_name"
+  printf '%s %s\n' "$bats_test_function" "$test_name"
 done

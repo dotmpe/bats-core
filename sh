@@ -2,10 +2,14 @@
 
 set -e
 
-export BATS_TEST_PATTERN="^[[:blank:]]*@test[[:blank:]]+(.*[^[:blank:]])[[:blank:]]+\{(.*)\$"
+export BATS_CASE_PREFID=@test
+export BATS_TEST_PATTERN="[[:blank:]]*$BATS_CASE_PREFID"
+export BATS_MODIFIER_PATTERN="((:[^:]+)|(:'[^']+'))+"
+export BATS_TEST_NAME_PATTERN="[[:blank:]]+(.*[^[:blank:]])[[:blank:]]+\{(.*)"
+
 export BATS_TEST_FILTER=
 
-./libexec/bats-core/bats-preprocess < template.bats
+./libexec/bats-core/bats-preprocess-2 < template.bats
 
 exit $?
 

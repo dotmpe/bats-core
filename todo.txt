@@ -1,3 +1,5 @@
+[2018-11-18] how about using readline for reading in the raw source while preprocessing, allows for line continuations while current syntax is a bit limited wrt. long strings
+
 TODO: cleanup tasks from docs
 TODO: -c -l
 FIXME: proper solution needs profiling, impact should be evaluated. Otherwise src_name:ReadMe.rst src_line:60 _id:FIXME

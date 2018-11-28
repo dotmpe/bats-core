@@ -43,7 +43,7 @@ fi
 BATS_TEST_DIRNAME="${BATS_TEST_FILENAME%/*}"
 BATS_TEST_NAMES=()
 
-load() {
+load_old() {
   local name="$1"
   local filename
 
@@ -59,6 +59,59 @@ load() {
   fi
 
   source "${filename}"
+}
+
+load() # ( PATH | NAME )
+{
+  test -n "$1" || return 1
+  while test $# -gt 0 
+  do
+    load_helper "$1" || return $?
+    shift
+  done
+}
+     
+
+test -n "$BATS_LIB_PATH" || {
+  BATS_LIB_PATH=$BATS_CWD:$BATS_TEST_DIRNAME:$BATS_TEST_DIRNAME/helper
+}
+
+test -n "$BATS_LIB_EXTS" || BATS_LIB_EXTS=bash\ sh
+test -n "$BATS_LIB_DEFAULT" || BATS_LIB_DEFAULT=load
+
+load_helper()
+{
+  test -e "$1" && {
+    source "$1"
+    return $?
+  }
+  for i in ${BATS_LIB_PATH//:/ }
+  do
+    test -d "$i/$1" && {
+
+      for e in $BATS_LIB_EXTS
+      do
+        test -e "$i/$1/$BATS_LIB_DEFAULT.$e" && {
+          source "$i/$1/$BATS_LIB_DEFAULT.$e"
+          return $?
+        }
+      done
+
+    } || {
+      test -e "$i/$1" && {
+        source "$i/$1"
+        return $?
+      }
+      for e in $BATS_LIB_EXTS
+      do
+        test -e "$i/$1.$e" && {
+          source "$i/$1.$e"
+          return $?
+        }
+      done
+    }
+  done
+  return 1
 }
 
 run() {

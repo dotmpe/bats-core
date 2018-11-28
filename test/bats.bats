@@ -210,6 +210,16 @@ fixtures bats
   [ $status -eq 1 ]
 }
 
+@test "load ext 1" {
+  HELPER_NAME="in-helper-dir" run bats "$FIXTURE_ROOT/load.bats"
+  [ $status -eq 0 ]
+}
+
+@test "load ext 2" {
+  HELPER_NAME="helper" run bats "$FIXTURE_ROOT/load.bats"
+  [ $status -eq 0 ]
+}
+
 @test "output is discarded for passing tests and printed for failing tests" {
   run bats "$FIXTURE_ROOT/output.bats"
   [ $status -eq 1 ]

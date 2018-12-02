@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-export BATS_VERSION="$(git describe)"
+export BATS_VERSION='1.1.0'
 
 version() {
   printf 'Bats %s\n' "$BATS_VERSION"

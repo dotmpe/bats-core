@@ -1,0 +1,68 @@
+# vim:ft=todo.txt:
+
+@load
+  Is meant to source `helper modules` into the current context. It is used as
+  a regular shell function anywhere in the script.
+
+@v1 (current)
+  - Sources an absolute path, or a localname +'.bash'.
+  - Else exits with stderr-line and status 1.
+
+  To use load more flexibly requires to resolve your own paths, or adopt setup
+  to Bats `load` way.
+
+@v2 design enhanced `load`:
+  Allow short names iso. long absolute paths. Pick up:
+
+  - first file with prespecified extensions, set default to `.bash`
+  - anywhere on BATS_LIB_PATH, but again only first existing path is sourced
+  - a default path value is set in `bats-exec-test` based on BATS_TEST_DIRNAME
+
+  That should all leave a backward compatible `load`.
+
+@v2 discussion
+  - lookup status-code/exit-code ticket
+  - Names are still free to include '/', for example to lookup `<user>/<repo>`
+
+  - How much thought to put in now, in varnames and cram in additional specs.
+
+    I think v2 is enough. With that setup each file needs only two words to setup another load mechanism or whatever it requires in addition.
+
+    load init
+    
+
+  - Tempted to add function to simply load *any* BATS_LIB_DEFAULT found.
+    E.g `default`, or `load_all` without any arguments..
+
+  - Variable BATS_LIB_PATH is not defined yet in Bats.
+
+    There is no path/exec lookup whatsoever. It may be useful for the test
+    author at least to do other non-source lookups using the same Bats load
+    mechanism.
+
+    lookup <name> # Echos pathname, or leaves a BATS_* env.
+  
+    BATS_LIB_EXTS= # lookup+source
+    BATS_VAR_EXTS= # lookup-only
+
+    - If required, add an option e.g. -I/--include-dir to amend inlcude path
+    - Else rename to avoid confusion
+
+@v3 or more enhancements
+
+  - Load not just existing file paths, but package names (dirs) as well.
+    e.g. defaults of BATS_LIB_DEFAULT=load BATS_LIB_EXTS=.bash establish/makes
+    use of <name>/load.bash convention.
+
+  - Extend Bats options and env init to auto-setup BATS_LIB_PATH in other ways
+  - Set sensible defaults, or turn off any juggling wth single switch.
+
+    --(no-,)auto-include
+
+    --npm --auto-include=npm,pip,rubygems
+
+  - Future unrelated unhancements wrt. BATS_LIB_PATH
+
+    - Allow suite to specify other suites as part of current suite
+      ie. like `load` but wrap with bats-preproc. `import`, `include`.
+    - Lookup non-(ba)sh fixture files

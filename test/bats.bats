@@ -197,7 +197,7 @@ fixtures bats
 
 @test "load aborts if the specified script does not exist" {
   HELPER_NAME="nonexistent" run bats "$FIXTURE_ROOT/load.bats"
-  [ $status -eq 1 ]
+  [ $status -eq 2 ]
 }
 
 @test "load sources scripts by absolute path" {
@@ -207,7 +207,7 @@ fixtures bats
 
 @test "load aborts if the script, specified by an absolute path, does not exist" {
   HELPER_NAME="${FIXTURE_ROOT}/nonexistent" run bats "$FIXTURE_ROOT/load.bats"
-  [ $status -eq 1 ]
+  [ $status -eq 2 ]
 }
 
 @test "load ext 1" {

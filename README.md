@@ -1,3 +1,8 @@
+> # :warning: WARNING: documentation of unreleased features ahead
+>
+> This is the current development version. You can find the documentation for v1.2.0 [here](../v1.2.0/README.md).
+> Please refer to [this list](docs/versions.md) for older versions.
+
 # Bats-core: Bash Automated Testing System (2018)
 
 [![Latest release](https://img.shields.io/github/release/bats-core/bats-core.svg)](https://github.com/bats-core/bats-core/releases/latest)
@@ -38,41 +43,41 @@ Test cases consist of standard shell commands. Bats makes use of Bash's
 test case exits with a `0` status code (success), the test passes. In this way,
 each line is an assertion of truth.
 
-**Tuesday, September 19, 2017:** This is a mirrored fork of [Bats][bats-orig] at
-commit [0360811][].  It was created via `git clone --bare` and `git push
---mirror`. See the [Background](#background) section below for more information.
-
-[bats-orig]: https://github.com/sstephenson/bats
-[0360811]: https://github.com/sstephenson/bats/commit/03608115df2071fff4eaaff1605768c275e5f81f
-
 ## Table of contents
 
+<!-- toc -->
+
 - [Installation](#installation)
-  - [Supported Bash versions](#supported-bash-versions)
-  - [Homebrew](#homebrew)
-  - [npm](#npm)
-  - [Installing Bats from source](#installing-bats-from-source)
-  - [Running Bats in Docker](#running-bats-in-docker)
-    - [Building a Docker image](#building-a-docker-image)
+  * [Supported Bash versions](#supported-bash-versions)
+  * [Homebrew](#homebrew)
+  * [npm](#npm)
+  * [Installing Bats from source](#installing-bats-from-source)
+  * [Installing Bats from source onto Windows Git Bash](#installing-bats-from-source-onto-windows-git-bash)
+  * [Running Bats in Docker](#running-bats-in-docker)
+    + [Building a Docker image](#building-a-docker-image)
 - [Usage](#usage)
+  * [Parallel Execution](#parallel-execution)
 - [Writing tests](#writing-tests)
-  - [`run`: Test other commands](#run-test-other-commands)
-  - [`load`: Share common code](#load-share-common-code)
-  - [`skip`: Easily skip tests](#skip-easily-skip-tests)
-  - [`setup` and `teardown`: Pre- and post-test hooks](#setup-and-teardown-pre--and-post-test-hooks)
-  - [Code outside of test cases](#code-outside-of-test-cases)
-  - [File descriptor 3 (read this if Bats hangs)](#file-descriptor-3-read-this-if-bats-hangs)
-  - [Printing to the terminal](#printing-to-the-terminal)
-  - [Special variables](#special-variables)
+  * [`run`: Test other commands](#run-test-other-commands)
+  * [`load`: Share common code](#load-share-common-code)
+  * [`skip`: Easily skip tests](#skip-easily-skip-tests)
+  * [`setup` and `teardown`: Pre- and post-test hooks](#setup-and-teardown-pre--and-post-test-hooks)
+  * [Code outside of test cases](#code-outside-of-test-cases)
+  * [File descriptor 3 (read this if Bats hangs)](#file-descriptor-3-read-this-if-bats-hangs)
+  * [Printing to the terminal](#printing-to-the-terminal)
+  * [Special variables](#special-variables)
+  * [Libraries and Add-ons](#libraries-and-add-ons)
 - [Testing](#testing)
 - [Support](#support)
 - [Contributing](#contributing)
 - [Contact](#contact)
 - [Version history](#version-history)
 - [Background](#background)
-  - [Why was this fork created?](#why-was-this-fork-created)
-  - [What's the plan and why?](#whats-the-plan-and-why)
+  * [What's the plan and why?](#whats-the-plan-and-why)
+  * [Why was this fork created?](#why-was-this-fork-created)
 - [Copyright](#copyright)
+
+<!-- tocstop -->
 
 ## Installation
 
@@ -132,8 +137,18 @@ install Bats into `/usr/local`,
     $ cd bats-core
     $ ./install.sh /usr/local
 
-Note that you may need to run `install.sh` with `sudo` if you do not have
+__Note:__ You may need to run `install.sh` with `sudo` if you do not have
 permission to write to the installation prefix.
+
+### Installing Bats from source onto Windows Git Bash
+
+Check out a copy of the Bats repository and install it to `$HOME`. This
+will place the `bats` executable in `$HOME/bin`, which should already be
+in `$PATH`.
+
+    $ git clone https://github.com/bats-core/bats-core.git
+    $ cd bats-core
+    $ ./install.sh $HOME
 
 ### Running Bats in Docker
 
@@ -150,8 +165,8 @@ Check out a copy of the Bats repository, then build a container image:
     $ docker build --tag bats/bats:latest .
 
 This creates a local Docker image called `bats/bats:latest` based on [Alpine
-Linux](https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md) 
-(to push to private registries, tag it with another organisation, e.g. 
+Linux](https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md)
+(to push to private registries, tag it with another organisation, e.g.
 `my-org/bats:latest`).
 
 To run Bats' internal test suite (which is in the container image at
@@ -159,18 +174,23 @@ To run Bats' internal test suite (which is in the container image at
 
     $ docker run -it bats/bats:latest /opt/bats/test
 
-To run a test suite from your local machine, mount in a volume and direct Bats
-to its path inside the container:
+To run a test suite from a directory called `test` in the current directory of
+your local machine, mount in a volume and direct Bats to its path inside the
+container:
 
-    $ docker run -it -v "$(pwd):/code" bats/bats:latest /code/test
+    $ docker run -it -v "${PWD}:/code" bats/bats:latest test
 
-This is a minimal Docker image. If more tools are required this can be used as a 
-base image in a Dockerfile using `FROM <Docker image>`.  In the future there may 
+> `/code` is the working directory of the Docker image. "${PWD}/test" is the
+> location of the test directory on the local machine.
+
+This is a minimal Docker image. If more tools are required this can be used as a
+base image in a Dockerfile using `FROM <Docker image>`.  In the future there may
 be images based on Debian, and/or with more tools installed (`curl` and `openssl`,
 for example). If you require a specific configuration please search and +1 an
 issue or [raise a new issue](https://github.com/bats-core/bats-core/issues).
 
-Further usage examples are in [the wiki](https://github.com/bats-core/bats-core/wiki/Docker-Usage-Examples).
+Further usage examples are in
+[the wiki](https://github.com/bats-core/bats-core/wiki/Docker-Usage-Examples).
 
 ## Usage
 
@@ -182,19 +202,32 @@ supports:
 
 ```
 Bats x.y.z
-Usage: bats [-cr] [-f <regex>] [-p | -t] <test>...
+Usage: bats [OPTIONS] <tests>
        bats [-h | -v]
 
-  <test> is the path to a Bats test file, or the path to a directory
-  containing Bats test files (ending with ".bats").
+  <tests> is the path to a Bats test file, or the path to a directory
+  containing Bats test files (ending with ".bats")
 
-  -c, --count      Count the number of test cases without running any tests
-  -f, --filter     Filter test cases by names matching the regular expression
-  -h, --help       Display this help message
-  -p, --pretty     Show results in pretty format (default for terminals)
-  -r, --recursive  Include tests in subdirectories
-  -t, --tap        Show results in TAP format
-  -v, --version    Display the version number
+  -c, --count               Count test cases without running any tests
+  -f, --filter <regex>      Only run tests that match the regular expression
+  -F, --formatter <type>    Switch between formatters: pretty (default),
+                              tap (default w/o term), tap13, junit
+  -h, --help                Display this help message
+  -j, --jobs <jobs>         Number of parallel jobs (requires GNU parallel)
+  --no-tempdir-cleanup      Preserve test output temporary directory
+  --no-parallelize-across-files
+                            Serialize test file execution instead of running
+                            them in parallel (requires --jobs >1)
+  --no-parallelize-within-files
+                            Serialize test execution within files instead of
+                            running them in parallel (requires --jobs >1)
+  --report-formatter <type> Switch between reporters (same options as --formatter)
+  -o, --output <dir>        Directory to write report files
+  -p, --pretty              Shorthand for "--formatter pretty"
+  -r, --recursive           Include tests in subdirectories
+  -t, --tap                 Shorthand for "--formatter tap"
+  -T, --timing              Add timing information to tests
+  -v, --version             Display the version number
 
   For more information, see https://github.com/bats-core/bats-core
 ```
@@ -221,13 +254,54 @@ If Bats is not connected to a terminal—in other words, if you run it from a
 continuous integration system, or redirect its output to a file—the results are
 displayed in human-readable, machine-parsable [TAP format][TAP].
 
-You can force TAP output from a terminal by invoking Bats with the `--tap`
+You can force TAP output from a terminal by invoking Bats with the `--formatter tap`
 option.
 
-    $ bats --tap addition.bats
+    $ bats --formatter tap addition.bats
     1..2
     ok 1 addition using bc
     ok 2 addition using dc
+
+With `--formatter junit`, it is possible
+to output junit-compatible report files.
+
+    $ bats --formatter junit addition.bats
+    1..2
+    ok 1 addition using bc
+    ok 2 addition using dc
+
+Test reports will be output in the executing directory, but may be placed elsewhere
+by specifying the `--output` flag.
+
+    $ bats --formatter junit addition.bats --output /tmp
+    1..2
+    ok 1 addition using bc
+    ok 2 addition using dc
+
+### Parallel Execution
+
+By default, Bats will execute your tests serially. However, Bats supports
+parallel execution of tests (provided you have [GNU parallel][gnu-parallel] or
+a compatible replacement installed) using the `--jobs` parameter. This can
+result in your tests completing faster (depending on your tests and the testing
+hardware).
+
+Ordering of parallised tests is not guaranteed, so this mode may break suites
+with dependencies between tests (or tests that write to shared locations). When
+enabling `--jobs` for the first time be sure to re-run bats multiple times to
+identify any inter-test dependencies or non-deterministic test behaviour.
+
+When parallelizing, the results of a file only become visible after it has been finished.
+You can use `--no-parallelize-across-files` to get immediate output at the cost of reduced
+overall parallelity, as parallelization will only happen within files and files will be run
+sequentially.
+
+If you have files where tests within the file would interfere with each other, you can use
+`--no-parallelize-within-files` to disable parallelization within all files.
+If you want more finegrained control, you can `export BATS_NO_PARALLELIZE_WITHIN_FILE=true` in `setup_file()`
+or outside any function to disable parallelization only within the containing file.    
+
+[gnu-parallel]: https://www.gnu.org/software/parallel/
 
 ## Writing tests
 
@@ -238,6 +312,8 @@ process.
 
 For more details about how Bats evaluates test files, see [Bats Evaluation
 Process][bats-eval] on the wiki.
+
+For sample test files, see [examples](/docs/examples).
 
 [bats-eval]: https://github.com/bats-core/bats-core/wiki/Bats-Evaluation-Process
 
@@ -276,6 +352,64 @@ without any arguments prints usage information on the first line:
 }
 ```
 
+__Note:__ The `run` helper executes its argument(s) in a subshell, so if
+writing tests against environmental side-effects like a variable's value
+being changed, these changes will not persist after `run` completes.
+
+#### When not to use `run`
+
+In some cases, using `run` is redundant and results in a longer and less readable code.
+Here are a few examples.
+
+1. In case you only need to check the command succeeded, it is better to not use run, since
+
+```bash
+run command args ...
+echo "$output"
+[ "$status" -eq 0 ]
+```
+
+is equivalent to
+
+```bash
+command args ...
+```
+
+since bats sets `set -e` for all tests.
+
+2. In case you want to hide the command output (which `run` does), use output redirection instead.
+
+This
+
+```bash
+run command ...
+[ "$status" -eq 0 ]
+```
+
+is equivalent to
+
+```bash
+command ... >/dev/null
+```
+
+Note that the output is only shown if the test case fails.
+
+3. In case you need to assign command output to a variable (and maybe check
+   the command exit status), it is better to not use run, since
+
+```bash
+run command args ...
+[ "$status" -eq 0 ]
+var="$output"
+```
+
+is equivalent to
+```bash
+var=$(command args ...)
+```
+
+
+
 ### `load`: Share common code
 
 You may want to share common code across multiple test files. Bats includes a
@@ -284,18 +418,23 @@ location of the current test file. For example, if you have a Bats test in
 `test/foo.bats`, the command
 
 ```bash
-load test_helper
+load test_helper.bash
 ```
 
-will source the script `test/test_helper.bash` in your test file. This can be
-useful for sharing functions to set up your environment or load fixtures.
+will source the script `test/test_helper.bash` in your test file (limitations
+apply, see below). This can be useful for sharing functions to set up your
+environment or load fixtures. `load` delegates to Bash's `source` command after
+resolving relative paths.
 
-If you want to source a file using an absolute file path then the file extension
-must be included. For example
+As pointed out by @iatrou in https://www.tldp.org/LDP/abs/html/declareref.html,
+using the `declare` builtin restricts scope of a variable. Thus, since actual
+`source`-ing is performed in context of the `load` function, `declare`d symbols
+will _not_ be made available to callers of `load`.
 
-```bash
-load /test_helpers/test_helper.bash
-```
+> For backwards compatibility `load` first searches for a file ending in
+> `.bash` (e.g. `load test_helper` searches for `test_helper.bash` before
+> it looks for `test_helper`). This behaviour is deprecated and subject to
+> change, please use exact filenames instead.
 
 ### `skip`: Easily skip tests
 
@@ -333,11 +472,36 @@ Or you can skip conditionally:
 }
 ```
 
+__Note:__ `setup` and `teardown` hooks still run for skipped tests.
+
 ### `setup` and `teardown`: Pre- and post-test hooks
 
 You can define special `setup` and `teardown` functions, which run before and
 after each test case, respectively. Use these to load fixtures, set up your
 environment, and clean up when you're done.
+
+You can also define `setup_file` and `teardown_file`, which will run once before the first test's `setup` and after the last test's `teardown` for the containing file. Variables that are exported in `setup_file` will be visible to all following functions (`setup`, the test itself, `teardown`, `teardown_file`).
+
+<details>
+  <Summary>Example of setup/setup_file/teardown/teardown_file call order</summary>
+For example the following call order would result from two files (file 1 with tests 1 and 2, and file 2 with test3) beeing tested:
+
+```
+setup_file # from file 1, on entering file 1
+  setup
+    test1
+  teardown
+  setup
+    test2
+  teardown
+teardown_file # from file 1, on leaving file 1
+setup_file # from file 2,  on enter file 2
+  setup
+    test3
+  teardown
+teardown_file # from file 2,  on leaving file 2
+```
+</details>
 
 ### Code outside of test cases
 
@@ -367,7 +531,7 @@ service that will run indefinitely), Bats will be similarly blocked for the same
 amount of time.
 
 **To prevent this from happening, close FD 3 explicitly when running any command
-that may launch long-running child processes**, e.g. `command_name 3>- &`.
+that may launch long-running child processes**, e.g. `command_name 3>&-` .
 
 ### Printing to the terminal
 
@@ -377,9 +541,9 @@ consumption, but if Bats is called with the `-t` flag, then the TAP stream is
 directly printed to the console.
 
 This has implications if you try to print custom text to the terminal. As
-mentioned in [File descriptor 3](#file-descriptor-3), bats provides a special
-file descriptor, `&3`, that you should use to print your custom text. Here are
-some detailed guidelines to refer to:
+mentioned in [File descriptor 3](#file-descriptor-3-read-this-if-bats-hangs),
+bats provides a special file descriptor, `&3`, that you should use to print
+your custom text. Here are some detailed guidelines to refer to:
 
 - Printing **from within a test function**:
   - To have text printed from within a test function you need to redirect the
@@ -406,7 +570,7 @@ some detailed guidelines to refer to:
 
   - Text printed in such a way, will disable pretty formatting. Also, it will
     make output non-compliant with the TAP spec. The reason for this is that
-    each test file is evaluated n+1 times (as metioned
+    each test file is evaluated n+1 times (as mentioned
     [earlier](#writing-tests)). The first run will cause such output to be
     produced before the [_plan line_][tap-plan] is printed, contrary to the spec
     that requires the _plan line_ to be either the first or the last line of the
@@ -428,8 +592,25 @@ There are several global variables you can use to introspect on Bats tests:
 * `$BATS_TEST_DESCRIPTION` is the description of the current test case.
 * `$BATS_TEST_NUMBER` is the (1-based) index of the current test case in the
   test file.
+* `$BATS_SUITE_TEST_NUMBER` is the (1-based) index of the current test case in
+ the test suite (over all files).
 * `$BATS_TMPDIR` is the location to a directory that may be used to store
   temporary files.
+
+### Libraries and Add-ons
+
+Bats supports loading external assertion libraries and helpers. Those under `bats-core` are officially supported libraries (integration tests welcome!):
+
+- https://github.com/bats-core/bats-assert - common assertions for Bats
+- https://github.com/bats-core/bats-support - supporting library for Bats test helpers
+- https://github.com/bats-core/bats-file - common filesystem assertions for Bats
+- https://github.com/bats-core/bats-detik - e2e tests of applications in K8s environments
+
+and some external libraries, supported on a "best-effort" basis:
+
+- https://github.com/ztombol/bats-docs (still relevant? Requires review)
+- https://github.com/grayhemp/bats-mock (as per #147)
+- https://github.com/jasonkarns/bats-mock (how is this different from grayhemp/bats-mock?)
 
 ## Testing
 
@@ -469,44 +650,26 @@ See `docs/CHANGELOG.md`.
 
 ## Background
 
-### Why was this fork created?
-
-The original Bats repository needed new maintainers, and has not been actively
-maintained since 2013. While there were volunteers for maintainers, attempts to
-organize issues, and outstanding PRs, the lack of write-access to the repo
-hindered progress severely.
-
 ### What's the plan and why?
 
-The rough plan, originally [outlined
-here](https://github.com/sstephenson/bats/issues/150#issuecomment-323845404) is
-to create a new, mirrored mainline (this repo!). An excerpt:
+**Tuesday, September 19, 2017:** This was forked from [Bats][bats-orig] at
+commit [0360811][].  It was created via `git clone --bare` and `git push
+--mirror`.
 
-> **1. Roadmap 1.0:**
-> There are already existing high-quality PRs, and often-requested features and
-> issues, especially here at
-> [#196](https://github.com/sstephenson/bats/issues/196). Leverage these and
-> **consolidate into a single roadmap**.
->
-> **2. Create or choose a fork or *mirror* of this repo to use as the new
-> mainline:**
-> Repoint existing PRs (whichever ones are possible) to the new mainline, get
-> that repo to a stable 1.0. IMO we should create an organization and grant 2-3
-> people admin and write access.
+[bats-orig]: https://github.com/sstephenson/bats
+[0360811]: https://github.com/sstephenson/bats/commit/03608115df2071fff4eaaff1605768c275e5f81f
 
-Doing it this way accomplishes a number of things:
+This [bats-core repo](https://github.com/bats-core/bats-core) is the community-maintained Bats project.
 
-1. Removes the dependency on the original maintainer
-1. Enables collaboration and contribution flow again
-1. Allows the possibility of merging back to original, or merging from original
-   if or when the need arises
-1. Prevents lock-out by giving administrative access to more than one person,
-   increases transferability
+### Why was this fork created?
 
+There was an initial [call for maintainers][call-maintain] for the original Bats repository, but write access to it could not be obtained. With development activity stalled, this fork allowed ongoing maintenance and forward progress for Bats.
+
+[call-maintain]: https://github.com/sstephenson/bats/issues/150
 
 ## Copyright
 
-© 2017-2018 bats-core organization
+© 2017-2020 bats-core organization
 
 © 2011-2016 Sam Stephenson
 
